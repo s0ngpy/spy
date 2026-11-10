@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="面向洲际运输的高速真空管道运输系统 —— 复杂系统工程层级分解：任务、体系、整机、系统、子系统、模块" />
+<title>面向洲际运输的高速管道运输系统 · 复杂系统工程层级分解</title>
+<style>
+  /* ============ 基础变量 ============ */
+  :root{
+    --bg:#05080f;
+    --panel-a:rgba(20,34,60,.86);
+    --panel-b:rgba(10,18,34,.92);
+    --line:rgba(120,170,255,.16);
+    --silver:#c9d8ec;
+    --muted:#8ba1bf;
+    --white:#f2f7ff;
+
+    --lc:#38bdf8;
+    --lc-soft:rgba(56,189,248,.13);
+    --lc-line:rgba(56,189,248,.36);
+  }
+
+  /* 六层配色 */
+  .l-mission, .lv1{ --lc:#ffb703; --lc-soft:rgba(255,183,3,.13); --lc-line:rgba(255,183,3,.38); }
+  .l-sos,     .lv2{ --lc:#22d3ee; --lc-soft:rgba(34,211,238,.13); --lc-line:rgba(34,211,238,.38); }
+  .l-veh,     .lv3{ --lc:#a78bfa; --lc-soft:rgba(167,139,250,.13); --lc-line:rgba(167,139,250,.38); }
+  .l-sys,     .lv4{ --lc:#38bdf8; --lc-soft:rgba(56,189,248,.13); --lc-line:rgba(56,189,248,.38); }
+  .l-sub,     .lv5{ --lc:#34d399; --lc-soft:rgba(52,211,153,.13); --lc-line:rgba(52,211,153,.38); }
+  .l-mod,     .lv6{ --lc:#f472b6; --lc-soft:rgba(244,114,182,.13); --lc-line:rgba(244,114,182,.38); }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+
+  html{
+    scroll-behavior:smooth;
+    scroll-padding-top:76px;
+  }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",system-ui,-apple-system,sans-serif;
+    font-size:15.5px;
+    line-height:1.75;
+    color:var(--silver);
+    background:
+      radial-gradient(1100px 560px at 12% -6%, rgba(56,189,248,.14), transparent 62%),
+      radial-gradient(900px 520px at 92% 6%, rgba(139,92,246,.11), transparent 62%),
+      radial-gradient(900px 600px at 50% 104%, rgba(34,211,238,.07), transparent 65%),
+      var(--bg);
+    background-attachment:fixed;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  .wrap{ width:min(1140px,90vw); margin-inline:auto; }
+
+  /* ============ 顶栏 ============ */
+  .topbar{
+    position:sticky; top:0; z-index:60;
+    background:rgba(6,11,26,.74);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; height:58px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:9px;
+    font-size:14px; font-weight:700; color:var(--white);
+    letter-spacing:.02em; white-space:nowrap;
+  }
+  .brand i{
+    width:9px; height:9px; border-radius:50%;
+    background:linear-gradient(135deg,#7dd3fc,#a78bfa);
+    box-shadow:0 0 12px rgba(125,211,252,.9);
+    display:inline-block;
+  }
+  .navlinks{
+    display:flex; gap:2px; overflow-x:auto;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  .navlinks::-webkit-scrollbar{ display:none; }
+  .navlinks a{
+    font-size:13px; color:var(--muted); text-decoration:none;
+    padding:6px 11px; border-radius:999px; white-space:nowrap;
+    transition:color .25s, background .25s;
+  }
+  .navlinks a:hover{ color:#fff; background:rgba(56,189,248,.14); }
+
+  /* ============ Hero ============ */
+  .hero{ padding:64px 0 30px; }
+  .hero-tag{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:.16em; color:#7dd3fc;
+    padding:5px 14px; border-radius:999px;
+    background:rgba(56,189,248,.1);
+    border:1px solid rgba(56,189,248,.32);
+    margin-bottom:20px;
+  }
+  .hero h1{
+    margin:0 0 16px;
+    font-size:clamp(26px,4.8vw,50px);
+    line-height:1.24;
+    font-weight:800;
+    letter-spacing:.01em;
+    background:linear-gradient(100deg,#ffffff 6%,#a8d8ff 42%,#7dd3fc 66%,#c4b5fd 96%);
+    -webkit-background-clip:text; background-clip:text;
+    color:transparent;
+  }
+  .hero .sub{
+    margin:0 0 10px;
+    font-size:clamp(13.5px,1.7vw,17px);
+    color:#a9c2e0;
+    letter-spacing:.02em;
+  }
+  .hero .sub b{ color:#e6f3ff; font-weight:700; }
+  .hero .hint{
+    margin:0;
+    font-size:13px; color:var(--muted);
+  }
+
+  /* Hero 图形 */
+  .hero-art{
+    position:relative;
+    margin-top:34px;
+    height:clamp(210px,32vw,320px);
+    border-radius:22px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:
+      radial-gradient(circle at 72% 16%, rgba(56,189,248,.16), transparent 58%),
+      radial-gradient(circle at 20% 80%, rgba(167,139,250,.12), transparent 60%),
+      #04070e;
+    box-shadow:0 30px 70px -40px #000, inset 0 0 80px rgba(56,189,248,.06);
+  }
+  .stars{
+    position:absolute; inset:0; opacity:.85;
+    background-image:
+      radial-gradient(1.5px 1.5px at 6% 22%, rgba(255,255,255,.85), transparent),
+      radial-gradient(1.2px 1.2px at 17% 62%, rgba(255,255,255,.55), transparent),
+      radial-gradient(1.6px 1.6px at 27% 14%, rgba(190,230,255,.8), transparent),
+      radial-gradient(1.1px 1.1px at 38% 46%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.4px 1.4px at 49% 20%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1.2px 1.2px at 58% 68%, rgba(200,235,255,.6), transparent),
+      radial-gradient(1.7px 1.7px at 68% 32%, rgba(255,255,255,.85), transparent),
+      radial-gradient(1.1px 1.1px at 78% 74%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.4px 1.4px at 86% 18%, rgba(200,235,255,.7), transparent),
+      radial-gradient(1.2px 1.2px at 94% 56%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1.3px 1.3px at 33% 84%, rgba(255,255,255,.45), transparent),
+      radial-gradient(1.3px 1.3px at 73% 90%, rgba(255,255,255,.45), transparent);
+  }
+  .route{
+    position:absolute; inset:0; width:100%; height:100%;
+  }
+  .globe{
+    position:absolute;
+    left:-25%; width:150%; bottom:-380px; height:420px;
+    border-radius:50%;
+    background:radial-gradient(ellipse at 50% 0%, rgba(34,211,238,.24), rgba(9,18,36,.9) 55%, rgba(5,8,15,.96) 78%);
+    box-shadow:0 -2px 70px -14px rgba(34,211,238,.5);
+  }
+  .tube{
+    position:absolute;
+    left:4%; right:4%; top:62%;
+    height:clamp(34px,6vw,56px);
+    border-radius:999px;
+    overflow:hidden;
+    background:linear-gradient(180deg, rgba(180,215,255,.16), rgba(80,130,190,.05) 48%, rgba(150,200,255,.13));
+    border:1px solid rgba(140,190,240,.34);
+    box-shadow:inset 0 0 28px rgba(56,189,248,.18), 0 0 46px -10px rgba(56,189,248,.45);
+  }
+  .tube::before{
+    content:"";
+    position:absolute; left:0; right:0; top:24%; height:14%;
+    background:linear-gradient(90deg,transparent,rgba(200,235,255,.4),transparent);
+    opacity:.55;
+  }
+  .pod{
+    --podw:clamp(42px,6vw,72px);
+    position:absolute; top:50%; left:2%;
+    width:var(--podw); height:64%;
+    transform:translateY(-50%);
+    border-radius:999px;
+    background:linear-gradient(180deg,#f4fbff,#b9d6f2 42%,#5d8fbe 72%,#2c5a86);
+    box-shadow:0 0 18px rgba(125,211,252,.95), 0 0 42px rgba(56,189,248,.55), inset 0 -3px 8px rgba(0,0,0,.35);
+    animation:glide 9s ease-in-out infinite alternate;
+  }
+  .pod::after{
+    content:"";
+    position:absolute; right:100%; top:26%; width:110px; height:48%;
+    border-radius:999px;
+    background:linear-gradient(270deg, rgba(125,211,252,.65), transparent);
+    filter:blur(6px);
+  }
+  @keyframes glide{
+    from{ left:2%; }
+    to  { left:calc(98% - var(--podw)); }
+  }
+
+  /* ============ 通用区块 ============ */
+  section{ padding:66px 0; position:relative; z-index:1; }
+  section:last-of-type{ padding-bottom:40px; }
+
+  .sec-head{ margin-bottom:26px; max-width:780px; }
+  .tag{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; font-weight:700; letter-spacing:.14em;
+    padding:5px 13px; border-radius:999px;
+    color:var(--lc);
+    background:var(--lc-soft);
+    border:1px solid var(--lc-line);
+  }
+  .sec-head h2{
+    margin:14px 0 8px;
+    font-size:clamp(20px,2.6vw,29px);
+    font-weight:800;
+    color:var(--white);
+    letter-spacing:.02em;
+    display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  }
+  .sec-head h2 .en{
+    font-size:.58em; font-weight:600;
+    letter-spacing:.18em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .sec-head .lead{ margin:0; font-size:14.5px; color:var(--muted); }
+
+  /* ============ 卡片 ============ */
+  .grid{
+    display:grid; gap:16px;
+    grid-template-columns:repeat(auto-fit,minmax(228px,1fr));
+  }
+  .card{
+    position:relative;
+    padding:20px 20px 18px;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:linear-gradient(165deg,var(--panel-a),var(--panel-b));
+    transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .35s;
+    overflow:hidden;
+  }
+  .card::after{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:inherit;
+    background:radial-gradient(240px 120px at 50% -12%, var(--lc-soft), transparent 72%);
+    opacity:0; transition:opacity .35s;
+    pointer-events:none;
+  }
+  .card:hover{
+    transform:translateY(-6px);
+    border-color:var(--lc-line);
+    box-shadow:0 22px 44px -28px #000, 0 0 26px -12px var(--lc);
+  }
+  .card:hover::after{ opacity:1; }
+  .card h3{
+    margin:0 0 7px;
+    font-size:15.5px;
+    font-weight:700;
+    color:var(--white);
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+    position:relative; z-index:1;
+  }
+  .card p{
+    margin:0;
+    font-size:13.8px;
+    line-height:1.78;
+    color:var(--muted);
+    position:relative; z-index:1;
+  }
+  .idx{
+    font-size:10.5px; font-weight:800; letter-spacing:.1em;
+    color:var(--lc);
+    background:var(--lc-soft);
+    border:1px solid var(--lc-line);
+    border-radius:999px;
+    padding:1px 8px;
+    line-height:1.7;
+  }
+
+  /* 子系统列表 */
+  .sub-list{
+    list-style:none; margin:10px 0 0; padding:0;
+    display:flex; flex-wrap:wrap; gap:7px;
+    position:relative; z-index:1;
+  }
+  .sub-list li{
+    font-size:12.8px;
+    color:#cfe2f7;
+    padding:4px 10px;
+    border-radius:8px;
+    background:rgba(52,211,153,.08);
+    border:1px solid rgba(52,211,153,.24);
+    transition:.25s;
+  }
+  .sub-list li:hover{
+    background:rgba(52,211,153,.18);
+    border-color:rgba(52,211,153,.5);
+    transform:translateY(-2px);
+  }
+
+  /* ============ 模块 chip 云 ============ */
+  .chips{ display:flex; flex-wrap:wrap; gap:10px; }
+  .chip{
+    font-size:13.4px;
+    padding:8px 15px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:rgba(120,170,255,.06);
+    color:var(--silver);
+    cursor:default;
+    transition:transform .25s, border-color .25s, background .25s, color .25s, box-shadow .25s;
+  }
+  .chip:hover{
+    transform:translateY(-3px);
+    border-color:var(--lc-line);
+    background:var(--lc-soft);
+    color:#fff;
+    box-shadow:0 12px 24px -18px var(--lc);
+  }
+
+  /* ============ 层级流转图 ============ */
+  .flow{
+    display:flex; flex-wrap:wrap; align-items:stretch; justify-content:center;
+    gap:8px;
+    margin-top:6px;
+  }
+  .fnode{
+    flex:1 1 122px; min-width:118px;
+    display:flex; flex-direction:column; align-items:center; gap:1px;
+    padding:14px 10px;
+    text-align:center;
+    text-decoration:none;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:linear-gradient(165deg,var(--panel-a),var(--panel-b));
+    transition:transform .3s, border-color .3s, box-shadow .3s;
+  }
+  .fnode b{ font-size:10.5px; letter-spacing:.16em; color:var(--lc); }
+  .fnode span{ font-size:15px; font-weight:700; color:#fff; }
+  .fnode em{ font-size:12px; font-style:normal; color:var(--muted); }
+  .fnode:hover{
+    transform:translateY(-5px);
+    border-color:var(--lc-line);
+    box-shadow:0 18px 34px -24px #000, 0 0 22px -10px var(--lc);
+  }
+  .farrow{
+    display:flex; align-items:center;
+    color:#5b7291; font-size:16px; user-select:none;
+  }
+  .flow-note{
+    margin-top:22px;
+    padding:16px 20px;
+    border-radius:14px;
+    border:1px dashed rgba(120,170,255,.24);
+    background:rgba(56,189,248,.05);
+    font-size:14px;
+    color:#b9cde6;
+    line-height:1.85;
+  }
+  .flow-note b{ color:#7dd3fc; }
+
+  /* ============ 树状结构 ============ */
+  .tree-box{
+    border-radius:18px;
+    border:1px solid var(--line);
+    background:linear-gradient(165deg,rgba(18,32,56,.72),rgba(8,14,28,.9));
+    padding:18px;
+    overflow-x:auto;
+  }
+  .tree-tools{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    padding-bottom:14px;
+    margin-bottom:12px;
+    border-bottom:1px solid var(--line);
+  }
+  .tbtn-ghost{
+    font:inherit; font-size:13px;
+    color:var(--silver);
+    background:rgba(120,170,255,.08);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:6px 15px;
+    cursor:pointer;
+    transition:.25s;
+  }
+  .tbtn-ghost:hover{
+    color:#fff;
+    background:rgba(56,189,248,.18);
+    border-color:rgba(56,189,248,.5);
+  }
+  .tree-tools .hint{ font-size:12.5px; color:var(--muted); }
+
+  .tree{ font-size:14px; min-width:min-content; }
+  .tree ul{
+    list-style:none;
+    margin:0 0 0 14px;
+    padding-left:12px;
+    border-left:1px dashed rgba(120,170,255,.22);
+    display:none;
+  }
+  .tree > ul{
+    display:block;
+    margin-left:0; padding-left:0; border-left:0;
+  }
+  .tree li.open > ul{
+    display:block;
+    animation:treeIn .22s ease;
+  }
+  @keyframes treeIn{
+    from{ opacity:0; transform:translateY(-4px); }
+    to  { opacity:1; transform:none; }
+  }
+
+  .tnode{
+    display:flex; flex-wrap:wrap; align-items:center;
+    gap:4px 8px;
+    width:100%;
+    margin:1px 0;
+    padding:6px 9px;
+    font:inherit;
+    text-align:left;
+    color:var(--silver);
+    background:transparent;
+    border:0;
+    border-radius:9px;
+    cursor:pointer;
+    transition:background .2s;
+  }
+  .tnode:hover{ background:rgba(120,170,255,.08); }
+  .tnode.leaf{ cursor:default; }
+  .tnode.leaf:hover{ background:rgba(120,170,255,.05); }
+
+  .caret{
+    position:relative;
+    width:14px; height:14px; flex:0 0 14px;
+    transition:transform .22s ease;
+  }
+  .caret::before{
+    content:"";
+    position:absolute; left:4px; top:3px;
+    border-left:5px solid var(--lc);
+    border-top:4px solid transparent;
+    border-bottom:4px solid transparent;
+    transition:transform .22s ease;
+  }
+  .tnode.leaf .caret::before{ display:none; }
+  li.open > .tnode > .caret{ transform:rotate(90deg); }
+
+  .lbadge{
+    font-size:10.5px; font-weight:800; letter-spacing:.06em;
+    color:var(--lc);
+    background:var(--lc-soft);
+    border:1px solid var(--lc-line);
+    border-radius:6px;
+    padding:0 6px;
+    line-height:1.7;
+  }
+  .tname{ font-weight:600; color:var(--white); font-size:13.8px; }
+  .tdesc{ font-size:12.5px; color:var(--muted); }
+  .dot{
+    width:6px; height:6px; flex:0 0 6px;
+    border-radius:50%;
+    background:var(--lc);
+    box-shadow:0 0 8px var(--lc);
+  }
+
+  /* ============ 滚动出现 ============ */
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1);
+  }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* ============ 页脚 ============ */
+  footer{
+    position:relative; z-index:1;
+    margin-top:40px;
+    padding:38px 0 34px;
+    border-top:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(8,14,28,.2), rgba(6,11,26,.85));
+  }
+  .foot-grid{
+    display:grid; gap:22px;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  }
+  .foot-grid h4{
+    margin:0 0 8px;
+    font-size:14px;
+    color:var(--white);
+    font-weight:700;
+    display:flex; align-items:center; gap:8px;
+  }
+  .foot-grid h4::before{
+    content:"";
+    width:8px; height:8px; border-radius:2px;
+    background:linear-gradient(135deg,#7dd3fc,#a78bfa);
+  }
+  .foot-grid p{
+    margin:0;
+    font-size:13.4px;
+    color:var(--muted);
+    line-height:1.85;
+  }
+  .copy{
+    margin:24px 0 0;
+    padding-top:16px;
+    border-top:1px solid rgba(120,170,255,.1);
+    font-size:12.5px;
+    color:#6d82a0;
+    text-align:center;
+  }
+
+  /* ============ 响应式 ============ */
+  @media (max-width:900px){
+    .hero{ padding-top:48px; }
+  }
+  @media (max-width:680px){
+    section{ padding:52px 0; }
+    .topbar .wrap{ height:54px; gap:10px; }
+    .brand span{ display:none; }
+    .farrow{ display:none; }
+    .fnode{ flex:1 1 42%; min-width:0; }
+    .tree ul{ margin-left:9px; padding-left:9px; }
+    .card{ padding:17px 16px 16px; }
+  }
+  @media (max-width:400px){
+    body{ font-size:15px; }
+    .tname{ font-size:13px; }
+    .tdesc{ font-size:11.8px; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{
+      animation-duration:.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:.001ms !important;
+    }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= 顶栏 ================= -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand"><i></i><span>洲际高速管道运输系统</span></div>
+    <nav class="navlinks">
+      <a href="#mission">任务</a>
+      <a href="#sos">体系</a>
+      <a href="#vehicle">整机</a>
+      <a href="#system">系统</a>
+      <a href="#subsystem">子系统</a>
+      <a href="#module">模块</a>
+      <a href="#tree">分解树</a>
+      <a href="#flow">层级串联</a>
+      <a href="#challenge">特点难点</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ================= 1. Hero ================= -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-tag">复杂系统工程 · 层级分解</div>
+    <h1>面向洲际运输的高速管道运输系统</h1>
+    <p class="sub">复杂系统工程层级分解（<b>任务</b> · <b>体系</b> · <b>整机</b> · <b>系统</b> · <b>子系统</b> · <b>模块</b>）</p>
+    <p class="hint">Hyperloop 类超高速管道交通 ｜ 低真空管道 + 磁悬浮 + 直线电机驱动</p>
+
+    <div class="hero-art" aria-hidden="true">
+      <div class="stars"></div>
+      <svg class="route" viewBox="0 0 1000 300" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="routeGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#22d3ee" stop-opacity=".12"/>
+            <stop offset=".5" stop-color="#7dd3fc" stop-opacity=".95"/>
+            <stop offset="1" stop-color="#a78bfa" stop-opacity=".12"/>
+          </linearGradient>
+        </defs>
+        <path d="M70 190 Q500 30 930 190"
+              fill="none"
+              stroke="url(#routeGrad)"
+              stroke-width="2"
+              stroke-dasharray="7 9"
+              stroke-linecap="round"/>
+        <circle cx="70"  cy="190" r="5" fill="#22d3ee" opacity=".95"/>
+        <circle cx="500" cy="110" r="5.5" fill="#7dd3fc" opacity=".95"/>
+        <circle cx="930" cy="190" r="5" fill="#a78bfa" opacity=".95"/>
+        <circle cx="70"  cy="190" r="12" fill="none" stroke="#22d3ee" stroke-opacity=".35"/>
+        <circle cx="930" cy="190" r="12" fill="none" stroke="#a78bfa" stroke-opacity=".35"/>
+      </svg>
+      <div class="globe"></div>
+      <div class="tube">
+        <div class="pod"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= 2. 任务层 ================= -->
+  <section id="mission" class="l-mission">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">L1 · 任务层</span>
+        <h2>任务 Mission <span class="en">为什么做</span></h2>
+        <p class="lead">核心使命：实现跨大陆、跨洋的人员与高价值货物超高速点对点运输。</p>
+      </div>
+
+      <div class="grid">
+        <article class="card reveal">
+          <h3><span class="idx">01</span>核心使命</h3>
+          <p>跨大陆、跨洋的人员与高价值货物超高速点对点运输，构建陆上洲际高速通道。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">02</span>时空压缩</h3>
+          <p>把洲际出行压缩到“小时级”，显著缩短长距离运输的在途时间与不确定性。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">03</span>替代航空</h3>
+          <p>降低长距离出行对航空的依赖，为干线客流与高时效货运提供陆上备份方案。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">04</span>运行品质</h3>
+          <p>具备高速、低能耗、低排放与全天候运行能力，受天气影响小、可连续运转。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 3. 体系层 ================= -->
+  <section id="sos" class="l-sos">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">L2 · 体系层</span>
+        <h2>体系 SoS <span class="en">System of Systems</span></h2>
+        <p class="lead">它不是单一列车，而是由多条洲际管道干线、枢纽换乘网络、地面配套交通、能源网络、通信网络、运维保障网络共同构成的巨型交通体系——各子系统独立又协同。</p>
+      </div>
+
+      <div class="grid">
+        <article class="card reveal">
+          <h3><span class="idx">01</span>洲际管道干线</h3>
+          <p>多条跨洲、跨洋主干线构成骨架，承担大运量、长距离的点到点运输。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">02</span>枢纽换乘网络</h3>
+          <p>起点站、终点站与中间枢纽，负责集散、换乘、气闸过渡与运力调配。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">03</span>地面配套交通</h3>
+          <p>城市轨道、公路、机场接驳，解决“最后一公里”与多方式联程。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">04</span>能源网络</h3>
+          <p>沿线牵引供电、储能缓冲与能量回收，保障大功率持续牵引需求。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">05</span>通信网络</h3>
+          <p>沿线光纤与无线覆盖，支撑车地通信、调度指令与状态回传。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">06</span>运维保障网络</h3>
+          <p>巡检、维修、备件与应急处置体系，保证长周期高可用运行。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 4. 整机层 ================= -->
+  <section id="vehicle" class="l-veh">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">L3 · 整机层</span>
+        <h2>整机 Vehicles <span class="en">胶囊舱</span></h2>
+        <p class="lead">管道内运行的载人／载货悬浮胶囊舱，是直接承载旅客与货物的移动整机单元，包含客舱、悬浮推进、生命维持、导航通信等整体集成。</p>
+      </div>
+
+      <div class="grid">
+        <article class="card reveal">
+          <h3><span class="idx">01</span>载人胶囊舱</h3>
+          <p>客舱、座椅、行李空间与环控生保一体化设计，满足长距离舒适乘坐。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">02</span>载货胶囊舱</h3>
+          <p>标准货柜接口、固定与温控能力，面向高价值、高时效货物运输。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">03</span>悬浮推进集成</h3>
+          <p>悬浮架、导向机构与直线电机动子集成为一体，实现无接触高速运行。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">04</span>舱载信息集成</h3>
+          <p>导航通信、车载控制与状态监测整体集成，是整机的“神经中枢”。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 5. 系统层 ================= -->
+  <section id="system" class="l-sys">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">L4 · 系统层</span>
+        <h2>系统 Systems <span class="en">六大核心系统</span></h2>
+        <p class="lead">整机与基础设施被分解为 6 大核心系统，每个系统承担一类相对完整的功能。</p>
+      </div>
+
+      <div class="grid">
+        <article class="card reveal">
+          <h3><span class="idx">S1</span>管道低真空环境系统</h3>
+          <p>维持管内低真空环境，大幅降低气动阻力，是高速运行的前提条件。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S2</span>悬浮与线性推进系统</h3>
+          <p>无接触磁悬浮 + 直线电机驱动，提供牵引力、导向与制动能力。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S3</span>胶囊舱体系统</h3>
+          <p>承载旅客与货物的整机结构，兼顾气密、承压、舒适与轻量化。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S4</span>运行调度与控制系统</h3>
+          <p>负责列车级调度、安全间隔控制、速度曲线与故障处置。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S5</span>能源供给系统</h3>
+          <p>沿线供电、储能缓冲与能量回收，保障牵引功率与供电可靠性。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S6</span>枢纽与安全保障系统</h3>
+          <p>车站、气闸换乘、应急疏散与消防监测，兜住系统安全底线。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 6. 子系统层 ================= -->
+  <section id="subsystem" class="l-sub">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">L5 · 子系统层</span>
+        <h2>子系统 Sub-systems <span class="en">功能拆分</span></h2>
+        <p class="lead">对每个核心系统继续向下拆分，形成可分工、可独立研制与验证的子系统。</p>
+      </div>
+
+      <div class="grid">
+        <article class="card reveal">
+          <h3><span class="idx">S1</span>管道低真空环境系统</h3>
+          <ul class="sub-list">
+            <li>管体结构</li><li>真空抽气</li><li>气压监测</li><li>密封隔断</li><li>气闸舱</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S2</span>悬浮与线性推进系统</h3>
+          <ul class="sub-list">
+            <li>直线电机</li><li>悬浮导向</li><li>制动定位</li><li>受流供电</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S3</span>胶囊舱体系统</h3>
+          <ul class="sub-list">
+            <li>舱体结构</li><li>客舱内饰</li><li>舱门与密封</li><li>环控生保</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S4</span>运行调度与控制系统</h3>
+          <ul class="sub-list">
+            <li>调度中心</li><li>车载控制</li><li>通信传输</li><li>定位测速</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S5</span>能源供给系统</h3>
+          <ul class="sub-list">
+            <li>牵引变电</li><li>储能缓冲</li><li>能量回收</li><li>配电保护</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">S6</span>枢纽与安全保障系统</h3>
+          <ul class="sub-list">
+            <li>枢纽站房</li><li>气闸换乘</li><li>应急疏散</li><li>消防监测</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 7. 模块层 ================= -->
+  <section id="module" class="l-mod">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">L6 · 模块层</span>
+        <h2>模块 Modules <span class="en">可实现的硬件 / 软件单元</span></h2>
+        <p class="lead">继续拆到可采购、可制造、可测试的具体模块，是工程落地与责任分配的最小单元。</p>
+      </div>
+
+      <div class="chips reveal">
+        <span class="chip">真空机组模块</span>
+        <span class="chip">压力传感器模块</span>
+        <span class="chip">真空阀模块</span>
+        <span class="chip">密封圈模块</span>
+        <span class="chip">隔断门模块</span>
+        <span class="chip">气闸均压模块</span>
+        <span class="chip">驱动线圈模块</span>
+        <span class="chip">变频驱动模块</span>
+        <span class="chip">悬浮电磁铁模块</span>
+        <span class="chip">导向磁铁模块</span>
+        <span class="chip">制动靴模块</span>
+        <span class="chip">受流器模块</span>
+        <span class="chip">舱门模块</span>
+        <span class="chip">舱壁板模块</span>
+        <span class="chip">座椅模块</span>
+        <span class="chip">氧气循环模块</span>
+        <span class="chip">温控模块</span>
+        <span class="chip">车载控制器模块</span>
+        <span class="chip">状态监测模块</span>
+        <span class="chip">通信基站模块</span>
+        <span class="chip">车地无线模块</span>
+        <span class="chip">雷达测速模块</span>
+        <span class="chip">轨道信标模块</span>
+        <span class="chip">变流器模块</span>
+        <span class="chip">飞轮储能模块</span>
+        <span class="chip">超级电容模块</span>
+        <span class="chip">断路器模块</span>
+        <span class="chip">应急逃生模块</span>
+        <span class="chip">消防喷淋模块</span>
+        <span class="chip">监控摄像模块</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 8. 层级串联 + 树状结构 ================= -->
+  <section id="tree" class="l-rel">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag" style="--lc:#e2e8f0;--lc-soft:rgba(226,232,240,.09);--lc-line:rgba(226,232,240,.28)">层级串联 · 分解树</span>
+        <h2>六层如何逐级落地 <span class="en">Decomposition Tree</span></h2>
+        <p class="lead">点击带 ▸ 的节点可展开／收起，完整查看“任务—体系—整机—系统—子系统—模块”的树状分解。</p>
+      </div>
+
+      <!-- 树状结构图 -->
+      <div class="tree-box reveal">
+        <div class="tree-tools">
+          <button class="tbtn-ghost" data-tree="expand">全部展开</button>
+          <button class="tbtn-ghost" data-tree="collapse">全部收起</button>
+          <span class="hint">提示：点击带 ▸ 的节点展开 / 收起</span>
+        </div>
+
+        <div class="tree" id="decompTree">
+          <ul>
+            <!-- L1 -->
+            <li class="lv1 open">
+              <button class="tnode" aria-expanded="true">
+                <span class="caret"></span>
+                <span class="lbadge">L1</span>
+                <span class="tname">任务 Mission</span>
+                <span class="tdesc">跨大陆 · 跨洋超高速点对点运输</span>
+              </button>
+              <ul>
+                <!-- L2 -->
+                <li class="lv2 open">
+                  <button class="tnode" aria-expanded="true">
+                    <span class="caret"></span>
+                    <span class="lbadge">L2</span>
+                    <span class="tname">体系 SoS</span>
+                    <span class="tdesc">洲际高速管道交通巨型网络</span>
+                  </button>
+                  <ul>
+                    <li class="lv2">
+                      <button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>洲际管道干线网</span></button>
+                    </li>
+                    <li class="lv2">
+                      <button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>枢纽换乘网络</span></button>
+                    </li>
+                    <li class="lv2">
+                      <button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>地面配套交通</span></button>
+                    </li>
+                    <li class="lv2">
+                      <button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>能源网络</span></button>
+                    </li>
+                    <li class="lv2">
+                      <button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>通信网络</span></button>
+                    </li>
+                    <li class="lv2">
+                      <button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>运维保障网络</span></button>
+                    </li>
+
+                    <!-- L3 -->
+                    <li class="lv3 open">
+                      <button class="tnode" aria-expanded="true">
+                        <span class="caret"></span>
+                        <span class="lbadge">L3</span>
+                        <span class="tname">整机 · 悬浮胶囊舱</span>
+                        <span class="tdesc">客舱 / 悬浮推进 / 环控生保 / 导航通信</span>
+                      </button>
+                      <ul>
+                        <li class="lv3">
+                          <button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>载人胶囊舱</span></button>
+                        </li>
+                        <li class="lv3">
+                          <button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>载货胶囊舱</span></button>
+                        </li>
+
+                        <!-- L4-1 -->
+                        <li class="lv4">
+                          <button class="tnode" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="lbadge">L4</span>
+                            <span class="tname">管道低真空环境系统</span>
+                          </button>
+                          <ul>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">管体结构子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>管节模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>支撑塔架模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>热膨胀补偿模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">真空抽气子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>真空机组模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>真空阀模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">气压监测子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>压力传感器模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>数据采集模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">密封隔断子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>密封圈模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>隔断门模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">气闸舱子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>气闸舱门模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>均压控制模块</span></button></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <!-- L4-2 -->
+                        <li class="lv4">
+                          <button class="tnode" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="lbadge">L4</span>
+                            <span class="tname">悬浮与线性推进系统</span>
+                          </button>
+                          <ul>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">直线电机子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>驱动线圈模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>变频驱动模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">悬浮导向子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>悬浮电磁铁模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>导向磁铁模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">制动定位子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>制动靴模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>定位传感器模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">受流供电子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>受流器模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>舱载配电模块</span></button></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <!-- L4-3 -->
+                        <li class="lv4">
+                          <button class="tnode" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="lbadge">L4</span>
+                            <span class="tname">胶囊舱体系统</span>
+                          </button>
+                          <ul>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">舱体结构子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>舱壁板模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>舱门模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">客舱内饰子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>座椅模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>行李架模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">环控生保子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>氧气循环模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>温控模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">舱载控制子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>车载控制器模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>状态监测模块</span></button></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <!-- L4-4 -->
+                        <li class="lv4">
+                          <button class="tnode" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="lbadge">L4</span>
+                            <span class="tname">运行调度与控制系统</span>
+                          </button>
+                          <ul>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">调度中心子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>调度软件模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>监控大屏模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">车载控制子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>车载控制器模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>冗余总线模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">通信传输子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>通信基站模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>车地无线模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">定位测速子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>雷达测速模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>轨道信标模块</span></button></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <!-- L4-5 -->
+                        <li class="lv4">
+                          <button class="tnode" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="lbadge">L4</span>
+                            <span class="tname">能源供给系统</span>
+                          </button>
+                          <ul>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">牵引变电子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>变流器模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>变压器模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">储能缓冲子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>飞轮储能模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>超级电容模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">能量回收子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>回馈变流模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>储能控制模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">配电保护子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>断路器模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>保护继电器模块</span></button></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <!-- L4-6 -->
+                        <li class="lv4">
+                          <button class="tnode" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="lbadge">L4</span>
+                            <span class="tname">枢纽与安全保障系统</span>
+                          </button>
+                          <ul>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">枢纽站房子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>站台模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>换乘通道模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">气闸换乘子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>气闸门模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>均压控制模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">应急疏散子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>逃生舱门模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>疏散通道模块</span></button></li>
+                              </ul>
+                            </li>
+                            <li class="lv5">
+                              <button class="tnode" aria-expanded="false">
+                                <span class="caret"></span><span class="lbadge">L5</span><span class="tname">消防监测子系统</span>
+                              </button>
+                              <ul>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>消防喷淋模块</span></button></li>
+                                <li class="lv6"><button class="tnode leaf"><span class="caret"></span><span class="dot"></span><span>监控摄像模块</span></button></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 9. 层级关系串联 ================= -->
+  <section id="flow" class="l-rel">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag" style="--lc:#7dd3fc;--lc-soft:rgba(125,211,252,.1);--lc-line:rgba(125,211,252,.3)">层级串联</span>
+        <h2>从目标到执行 <span class="en">Top-down Flow</span></h2>
+        <p class="lead">六层逐级落地：越往上越接近“为什么做”，越往下越接近“怎么做”。</p>
+      </div>
+
+      <div class="flow reveal">
+        <a class="fnode l-mission" href="#mission"><b>L1</b><span>任务</span><em>定义目标</em></a>
+        <span class="farrow">→</span>
+        <a class="fnode l-sos" href="#sos"><b>L2</b><span>体系</span><em>组织网络</em></a>
+        <span class="farrow">→</span>
+        <a class="fnode l-veh" href="#vehicle"><b>L3</b><span>整机</span><em>提供载体</em></a>
+        <span class="farrow">→</span>
+        <a class="fnode l-sys" href="#system"><b>L4</b><span>系统</span><em>实现功能</em></a>
+        <span class="farrow">→</span>
+        <a class="fnode l-sub" href="#subsystem"><b>L5</b><span>子系统</span><em>分工协作</em></a>
+        <span class="farrow">→</span>
+        <a class="fnode l-mod" href="#module"><b>L6</b><span>模块</span><em>完成执行</em></a>
+      </div>
+
+      <p class="flow-note">
+        <b>任务</b>定义目标，<b>体系</b>组织网络，<b>整机</b>提供载体，<b>系统</b>实现功能，<b>子系统</b>分工协作，<b>模块</b>完成具体执行。
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= 10. 系统特点与难点 ================= -->
+  <section id="challenge" class="l-sys">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">复杂系统特征</span>
+        <h2>系统特点与工程难点 <span class="en">Challenges</span></h2>
+        <p class="lead">高速只是表象，真正困难的是多学科、多主体、全寿命周期的系统性耦合。</p>
+      </div>
+
+      <div class="grid">
+        <article class="card reveal">
+          <h3><span class="idx">01</span>低阻高速</h3>
+          <p>低真空环境 + 磁悬浮无接触运行，气动阻力与机械摩擦同时降到很低，速度可达千公里级。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">02</span>多系统强耦合</h3>
+          <p>真空、磁浮、结构、控制、能源深度耦合，任一环节偏差都会沿链条放大，需一体化设计与仿真。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">03</span>长距离安全</h3>
+          <p>数千公里管道沿线的泄漏、失稳、阻塞与故障需可检测、可隔离、可应急，安全冗余要求极高。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">04</span>跨区域协同</h3>
+          <p>跨越国家与地区，涉及技术标准、法规许可、运营主体与收益分配的多方协调。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">05</span>能源与运维</h3>
+          <p>大功率牵引、储能缓冲与能量回收，加上沿线巡检维修，共同决定全寿命周期成本。</p>
+        </article>
+        <article class="card reveal">
+          <h3><span class="idx">06</span>投资与验证</h3>
+          <p>超大工程投资，且缺少全尺寸、全工况试验验证，需要通过缩比试验与数字孪生逐步降风险。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= 页脚 ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h4>课程作业</h4>
+        <p>《复杂系统工程》课程作业 ｜ 小组展示<br>主题：面向洲际运输的高速管道运输系统</p>
+      </div>
+      <div>
+        <h4>内容说明</h4>
+        <p>以“任务—体系—整机—系统—子系统—模块”六层分解，展示复杂工程系统的顶层设计与逐级落地逻辑。</p>
+      </div>
+      <div>
+        <h4>技术路线</h4>
+        <p>低真空管道 + 磁悬浮导向 + 直线电机推进 + 全线智能调度，构建陆上洲际高速运输通道。</p>
+      </div>
+    </div>
+    <p class="copy">复杂系统工程课程作业 · 小组展示 ｜ 仅用于课堂交流与学习</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- 树状结构：节点展开 / 收起 ---------- */
+  var nodes = document.querySelectorAll('.tnode');
+
+  Array.prototype.forEach.call(nodes, function (btn) {
+    if (btn.classList.contains('leaf')) return;
+
+    btn.addEventListener('click', function () {
+      var li = btn.closest('li');
+      if (!li) return;
+      li.classList.toggle('open');
+      btn.setAttribute('aria-expanded', li.classList.contains('open') ? 'true' : 'false');
+    });
+  });
+
+  /* ---------- 全部展开 / 全部收起 ---------- */
+  var toolBtns = document.querySelectorAll('[data-tree]');
+
+  Array.prototype.forEach.call(toolBtns, function (btn) {
+    btn.addEventListener('click', function () {
+      var doOpen = btn.getAttribute('data-tree') === 'expand';
+      var allLi = document.querySelectorAll('.tree li');
+
+      Array.prototype.forEach.call(allLi, function (li) {
+        var subUl = li.querySelector('ul');
+        if (!subUl) return;
+
+        li.classList.toggle('open', doOpen);
+
+        var b = li.querySelector('.tnode');
+        if (b && !b.classList.contains('leaf')) {
+          b.setAttribute('aria-expanded', doOpen ? 'true' : 'false');
+        }
+      });
+    });
+  });
+
+  /* ---------- 滚动出现动画 ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    Array.prototype.forEach.call(revealEls, function (el, i) {
+      el.style.transitionDelay = (Math.min(i % 6, 5) * 55) + 'ms';
+      io.observe(el);
+    });
+  } else {
+    Array.prototype.forEach.call(revealEls, function (el) {
+      el.classList.add('in');
+    });
+  }
+
+})();
+</script>
+
+</body>
+</html>
