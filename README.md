@@ -8,5 +8,5 @@
 | 次数  | 作业文件 | 提交日期 |
 |---|---|---|---|
 | 第1次 |  [查看作业](homework01/hw01.html) | 
-| 第2次 |  [查看作业](homework02/hw02.html) | 
-| 第3次 |  [查看作业](homework03/hw03.html) | 
+| 第2次 |  [查看作业](homework01/hw02.html) | 
+| 第3次 |  [查看作业](homework01/hw03.html) | 
