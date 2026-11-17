@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面向洲际运输的高速真空管道运输系统 - 需求定义</title>
+<style>
+    :root {
+        --bg-deep: #050a14;
+        --bg-panel: rgba(14, 25, 45, 0.7);
+        --border-color: rgba(100, 180, 255, 0.2);
+        --text-main: #e2e8f0;
+        --text-muted: #94a3b8;
+        --accent: #38bdf8;
+        --accent-glow: rgba(56, 189, 248, 0.4);
+        --accent-purple: #a78bfa;
+        --accent-gold: #fbbf24;
+        --font-sys: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+        background-color: var(--bg-deep);
+        background-image: 
+            radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+            radial-gradient(circle at 85% 90%, rgba(167, 139, 250, 0.1) 0%, transparent 40%);
+        background-attachment: fixed;
+        color: var(--text-main);
+        font-family: var(--font-sys);
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* 顶部导航 */
+    nav {
+        position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+        background: rgba(5, 10, 20, 0.85);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-color);
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0 5vw; z-index: 1000;
+    }
+    .nav-brand { font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+    .nav-brand::before { content: ''; display: block; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* 通用容器 */
+    .container { width: min(1200px, 90vw); margin: 0 auto; padding: 80px 0; }
+    .section-title { font-size: 2rem; font-weight: 800; margin-bottom: 12px; color: #fff; position: relative; display: inline-block; }
+    .section-title::after { content: ''; position: absolute; left: 0; bottom: -8px; width: 40px; height: 3px; background: var(--accent); border-radius: 2px; box-shadow: 0 0 8px var(--accent); }
+    .section-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 40px; max-width: 800px; }
+
+    /* Hero 区域 */
+    .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; overflow: hidden; }
+    .hero-bg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80vw; height: 80vw; max-width: 800px; max-height: 800px; border: 1px dashed rgba(56, 189, 248, 0.2); border-radius: 50%; animation: rotate 60s linear infinite; }
+    .hero-bg::before { content: ''; position: absolute; top: 10%; left: 10%; width: 80%; height: 80%; border: 1px solid rgba(167, 139, 250, 0.15); border-radius: 50%; }
+    .hero-bg::after { content: ''; position: absolute; top: 30%; left: -5%; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 20px var(--accent); }
+    @keyframes rotate { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+    .hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; letter-spacing: 2px; background: linear-gradient(135deg, #fff 30%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; z-index: 1; }
+    .hero p { font-size: clamp(1rem, 2vw, 1.25rem); color: var(--text-muted); max-width: 700px; z-index: 1; }
+    .hero-tag { display: inline-block; padding: 6px 16px; border-radius: 20px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); color: var(--accent); font-size: 0.85rem; margin-bottom: 24px; z-index: 1; }
+
+    /* 卡片通用样式 */
+    .card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px; backdrop-filter: blur(10px); transition: all 0.3s ease; }
+    .card:hover { transform: translateY(-5px); border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(56, 189, 248, 0.1); }
+
+    /* 概念对比区 (ConOps vs OpsCon) */
+    .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .concept-card h3 { font-size: 1.5rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .concept-card h3 span { font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: normal; }
+    .conops h3 { color: var(--accent-gold); }
+    .conops h3 span { background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .opscon h3 { color: var(--accent); }
+    .opscon h3 span { background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .concept-content { font-size: 0.95rem; color: var(--text-muted); }
+    .concept-content strong { color: #fff; }
+    .concept-content ul { list-style: none; margin-top: 16px; }
+    .concept-content li { margin-bottom: 12px; padding-left: 20px; position: relative; }
+    .concept-content li::before { content: '▹'; position: absolute; left: 0; color: var(--accent); }
+
+    /* BRS 区域 (表4-1) */
+    .brs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; }
+    .brs-item { padding: 24px; }
+    .brs-item h4 { font-size: 1.1rem; color: #fff; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+    .brs-item p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; }
+    .brs-item ul { list-style-type: square; margin-left: 20px; font-size: 0.9rem; color: var(--text-muted); }
+    .brs-item li { margin-bottom: 6px; }
+
+    /* StRS 区域 (表4-5) */
+    .strs-container { display: flex; flex-direction: column; gap: 20px; }
+    .strs-row { display: flex; align-items: center; gap: 20px; padding: 20px; border-left: 4px solid var(--accent-purple); background: rgba(167, 139, 250, 0.05); border-radius: 0 12px 12px 0; }
+    .strs-role { flex: 0 0 150px; font-weight: 700; color: var(--accent-purple); font-size: 1.05rem; }
+    .strs-needs { flex: 1; font-size: 0.95rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 10px; }
+    .strs-needs span { background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+
+    /* 运营场景时间轴 */
+    .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+    .timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent-purple)); }
+    .timeline-item { position: relative; margin-bottom: 30px; padding-left: 60px; }
+    .timeline-item::before { content: ''; position: absolute; left: 14px; top: 6px; width: 14px; height: 14px; border-radius: 50%; background: var(--bg-deep); border: 3px solid var(--accent); box-shadow: 0 0 10px var(--accent); }
+    .timeline-item h4 { color: #fff; font-size: 1.1rem; margin-bottom: 6px; }
+    .timeline-item p { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* 页脚 */
+    footer { border-top: 1px solid var(--border-color); padding: 40px 0; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+        .concept-grid { grid-template-columns: 1fr; }
+        .strs-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+        .nav-links { display: none; }
+    }
+
+    /* 滚动动画 */
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-brand">Hyperloop System</div>
+    <div class="nav-links">
+        <a href="#concept">概念定义</a>
+        <a href="#brs">业务需求 (BRS)</a>
+        <a href="#strs">相关方需求 (StRS)</a>
+        <a href="#opscon">运行场景</a>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-tag">复杂系统工程作业 2</div>
+    <h1>洲际高速管道运输系统</h1>
+    <p>基于国际标准过程的业务与相关方需求分析 (BRS & StRS)<br>从组织战略到系统生命周期的概念演进</p>
+</header>
+
+<main>
+    <!-- 核心概念区 (ConOps vs OpsCon) -->
+    <section class="container reveal" id="concept">
+        <h2 class="section-title">概念定义演进</h2>
+        <p class="section-desc">根据 ISO/IEC/IEEE 29148，从问题域到方案域，厘清组织层面的“运营概念”与系统层面的“运行概念”。</p>
+        
+        <div class="concept-grid">
+            <div class="card concept-card conops">
+                <h3>ConOps <span>运营概念 / 组织层面</span></h3>
+                <div class="concept-content">
+                    <p><strong>定义：</strong>描述组织领导层期望的运作方式。对于洲际管道，它不仅是交通工具，更是重构洲际经济地理的超级基础设施。</p>
+                    <ul>
+                        <li><strong>战略目标：</strong>建立横跨大陆的“小时级”交通圈，取代部分洲际航空。</li>
+                        <li><strong>业务模式：</strong>政府引导、多方融资、特许经营，形成能源-交通-物流融合生态。</li>
+                        <li><strong>相关系统：</strong>统筹城市轨道、电网、通信网等现有和未来系统。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card concept-card opscon">
+                <h3>OpsCon <span>运行概念 / 系统层面</span></h3>
+                <div class="concept-content">
+                    <p><strong>定义：</strong>描述特定系统为了完成使命任务将要做什么以及为什么，从用户视角描述系统特点。</p>
+                    <ul>
+                        <li><strong>产品上下文：</strong>管道胶囊舱在低真空管道中高速运行，通过气闸与枢纽接驳。</li>
+                        <li><strong>运行场景：</strong>涵盖正常（巡航）、退化（降速）及异常（紧急制动/逃生）场景。</li>
+                        <li><strong>需求导出：</strong>导出舱体气密性、悬浮控制、应急生命维持等系统级功能需求。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BRS 业务需求规格 (表4-1框架) -->
+    <section class="container reveal" id="brs">
+        <h2 class="section-title">业务需求规格说明书 (BRS)</h2>
+        <p class="section-desc">基于 ISO/IEC/IEEE 29148 表4-1框架，定义洲际管道项目在业务管理层面的高层级目标与需求。</p>
+
+        <div class="brs-grid">
+            <div class="card brs-item">
+                <h4>1. 业务目的与范围</h4>
+                <p><strong>业务目的：</strong>解决跨大陆/跨洋运输对航空的过度依赖，提供高速、低能耗、低排放、全天候的替代方案，压缩洲际时空距离。</p>
+                <p><strong>业务范围：</strong>涵盖主干线管道基础设施、悬浮胶囊舱整机、枢纽换乘网络及沿线能源通信网络。</p>
+            </div>
+            <div class="card brs-item">
+                <h4>2. 业务管理需求</h4>
+                <ul>
+                    <li><strong>业务环境：</strong>需符合跨国技术标准，应对地缘政治与环保法规要求。</li>
+                    <li><strong>业务模型：</strong>重资产投资，通过客运票务、高价值冷链物流及沿线土地开发实现盈利。</li>
+                    <li><strong>信息环境：</strong>构建跨国界、统一的云原生调度与数字孪生运维平台。</li>
+                </ul>
+            </div>
+            <div class="card brs-item">
+                <h4>3. 业务运行需求</h4>
+                <ul>
+                    <li><strong>运行质量：</strong>核心指标为发车频次（高峰期5分钟/班）、准时率（>99.9%）。</li>
+                    <li><strong>业务约束：</strong>必须满足各国安全监管机构的审查，确保无重大安全事故。</li>
+                    <li><strong>业务结构：</strong>设立跨国联合运营公司，统筹各段管线的资源调度。</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- StRS 相关方需求 (表4-5框架) -->
+    <section class="container reveal" id="strs">
+        <h2 class="section-title">相关方需求规格说明书 (StRS)</h2>
+        <p class="section-desc">识别系统生命周期内的关键相关方，并在业务运营层面提取其核心需要与期望。</p>
+
+        <div class="strs-container">
+            <div class="strs-row">
+                <div class="strs-role">乘客 (Passengers)</div>
+                <div class="strs-needs">
+                    <span>高安全性（全生命周期）</span>
+                    <span>乘坐舒适度（低噪、微重力感）</span>
+                    <span>准点率（全天候运行）</span>
+                    <span>票价具竞争力</span>
+                </div>
+            </div>
+            <div class="strs-row">
+                <div class="strs-role">货运商 (Freight)</div>
+                <div class="strs-needs">
+                    <span>极高时效性（跨洲小时级）</span>
+                    <span>温控与防震环境</span>
+                    <span>便捷的货物装卸接口</span>
+                    <span>实时物流追踪</span>
+                </div>
+            </div>
+            <div class="strs-row">
+                <div class="strs-role">政府与监管 (Gov)</div>
+                <div class="strs-needs">
+                    <span>符合跨国安全与环保标准</span>
+                    <span>拉动沿线经济与就业</span>
+                    <span>具备国防与战略投送潜力</span>
+                    <span>能源消耗可持续</span>
+                </div>
+            </div>
+            <div class="strs-row">
+                <div class="strs-role">运营商 (Operator)</div>
+                <div class="strs-needs">
+                    <span>低运维成本（高可靠性）</span>
+                    <span>系统高可用性（快速故障恢复）</span>
+                    <span>模块化设计（易于升级扩容）</span>
+                    <span>能源回收效率最大化</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OpsCon 运行概念与场景 -->
+    <section class="container reveal" id="opscon">
+        <h2 class="section-title">OpsCon 运行场景切片</h2>
+        <p class="section-desc">展示洲际管道系统一次完整运输任务的生命周期切片，从正常到异常场景的考量。</p>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <h4>1. 枢纽进站与安检</h4>
+                <p>乘客或货物抵达枢纽，完成票务核验与安检。气闸舱完成均压准备，连接胶囊舱。</p>
+            </div>
+            <div class="timeline-item">
+                <h4>2. 舱体入轨与真空隔离</h4>
+                <p>胶囊舱驶入发车轨道，气闸舱封闭，真空机组将发车段抽至低真空环境，等待发车指令。</p>
+            </div>
+            <div class="timeline-item">
+                <h4>3. 悬浮加速与巡航</h4>
+                <p>直线电机启动，舱体磁悬浮加速。车内环控系统维持气压与温度，导航系统实时校准姿态。</p>
+            </div>
+            <div class="timeline-item">
+                <h4>4. 异常场景 (应急响应)</h4>
+                <p>若管道失压或动力故障，舱体制动靠边，隔断阀关闭。车载氧气循环模块启动，应急逃生舱门准备。</p>
+            </div>
+            <div class="timeline-item">
+                <h4>5. 减速进站与汇入</h4>
+                <p>接近目标枢纽，直线电机切换为发电机模式进行能量回收。舱体减速，进入接收气闸舱，完成旅程。</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container" style="padding: 0;">
+        <p>《复杂系统工程》课程作业 2 · 小组展示</p>
+        <p style="margin-top: 10px; font-size: 0.8rem;">基于 ISO/IEC/IEEE 15288 & 29148 过程标准构建 · 面向洲际运输的高速管道运输系统</p>
+    </div>
+</footer>
+
+<script>
+    // 滚动平滑显现动画
+    document.addEventListener('DOMContentLoaded', () => {
+        const reveals = document.querySelectorAll('.reveal');
+        
+        const revealOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // 动画只执行一次
+                }
+            });
+        }, revealOptions);
+
+        reveals.forEach(reveal => {
+            revealOnScroll.observe(reveal);
+        });
+    });
+</script>
+
+</body>
+</html>
