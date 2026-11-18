@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宋培源 | 复杂系统工程 · 洲际管道运输系统作业</title>
+<style>
+  :root{
+    --bg:#060c13;
+    --cyan:#38bdf8;
+    --cyan-soft:#7dd3fc;
+    --cyan-dim:rgba(56,189,248,.35);
+    --amber:#f59e0b;
+    --text:#e8f2f9;
+    --muted:#8aa3b8;
+    --card:rgba(13,26,40,.78);
+    --border:rgba(56,189,248,.16);
+    --radius:20px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    padding:56px 20px 60px;
+    line-height:1.7;
+    overflow-x:hidden;
+    position:relative;
+  }
+  /* 背景光晕 + 工程网格 */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(1000px 600px at 12% -10%, rgba(56,189,248,.14), transparent 60%),
+      radial-gradient(900px 600px at 92% 8%, rgba(245,158,11,.10), transparent 55%),
+      radial-gradient(800px 700px at 50% 110%, rgba(56,189,248,.08), transparent 60%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:-1;
+    background-image:
+      linear-gradient(rgba(56,189,248,.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,189,248,.055) 1px, transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(circle at 50% 28%, #000 0%, transparent 78%);
+    mask-image:radial-gradient(circle at 50% 28%, #000 0%, transparent 78%);
+  }
+  .wrap{max-width:1020px;margin:0 auto;position:relative;}
+
+  /* 顶部标签 */
+  .tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:11.5px;letter-spacing:2.5px;text-transform:uppercase;
+    color:var(--cyan);
+    padding:6px 14px;
+    border:1px solid var(--cyan-dim);
+    border-radius:999px;
+    background:rgba(56,189,248,.06);
+    margin-bottom:22px;
+  }
+  .tag::before{
+    content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 10px var(--cyan);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;transform:scale(1);}
+    50%{opacity:.35;transform:scale(.85);}
+  }
+
+  h1{
+    font-size:clamp(28px,4.4vw,44px);
+    line-height:1.25;
+    letter-spacing:.5px;
+    font-weight:800;
+  }
+  h1 .accent{
+    background:linear-gradient(100deg,var(--cyan) 0%, var(--cyan-soft) 40%, var(--amber) 100%);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .sub{
+    color:var(--muted);
+    font-size:15px;
+    margin-top:14px;
+    max-width:660px;
+  }
+
+  /* 个人信息 */
+  .profile{
+    margin-top:28px;
+    display:flex;flex-wrap:wrap;gap:12px;
+  }
+  .chip{
+    display:flex;align-items:center;gap:9px;
+    padding:9px 18px;
+    border-radius:999px;
+    background:rgba(13,26,40,.8);
+    border:1px solid var(--border);
+    font-size:13.5px;
+    color:var(--text);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  }
+  .chip b{color:var(--cyan);font-weight:600;}
+
+  /* 管道装饰线 */
+  .pipe{
+    margin:38px 0 40px;
+    height:44px;
+    position:relative;
+    display:flex;align-items:center;
+  }
+  .pipe-track{
+    position:absolute;left:0;right:0;height:4px;
+    border-radius:2px;
+    background:linear-gradient(90deg,
+      rgba(56,189,248,.05),
+      rgba(56,189,248,.35),
+      rgba(245,158,11,.35),
+      rgba(56,189,248,.05));
+    overflow:hidden;
+  }
+  .pipe-track::after{
+    content:"";
+    position:absolute;top:0;bottom:0;width:160px;
+    background:linear-gradient(90deg,transparent,rgba(125,211,252,.95),transparent);
+    filter:blur(1px);
+    animation:flow 3.8s linear infinite;
+  }
+  @keyframes flow{
+    0%{left:-160px;}
+    100%{left:100%;}
+  }
+  .pipe-nodes{
+    position:relative;width:100%;
+    display:flex;justify-content:space-between;
+  }
+  .node{
+    width:12px;height:12px;border-radius:50%;
+    background:#0d1c2b;
+    border:2px solid var(--cyan);
+    box-shadow:0 0 12px rgba(56,189,248,.55);
+  }
+  .node:nth-child(3){
+    border-color:var(--amber);
+    box-shadow:0 0 12px rgba(245,158,11,.5);
+  }
+
+  /* 作业区标题 */
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin-bottom:20px;
+  }
+  .section-head h2{
+    font-size:18px;letter-spacing:.5px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .section-head h2::before{
+    content:"";width:4px;height:18px;border-radius:2px;
+    background:linear-gradient(180deg,var(--cyan),var(--amber));
+  }
+  .count{font-size:13px;color:var(--muted);}
+
+  /* 卡片网格 */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:22px;
+  }
+  .card{
+    position:relative;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:26px 24px 24px;
+    display:flex;flex-direction:column;
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+    opacity:0;transition:opacity .25s;
+  }
+  .card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(56,189,248,.45);
+    box-shadow:0 24px 50px -26px rgba(56,189,248,.7);
+  }
+  .card:hover::before{opacity:1;}
+
+  .node-num{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .node-num .dot{
+    width:34px;height:34px;flex:0 0 34px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:700;
+    color:var(--cyan);
+    background:rgba(56,189,248,.1);
+    border:1px solid rgba(56,189,248,.4);
+  }
+  .node-num .line{
+    flex:1;height:1px;
+    background:linear-gradient(90deg,rgba(56,189,248,.4),transparent);
+  }
+  .card h3{font-size:17.5px;margin-bottom:8px;}
+  .card p{font-size:13.5px;color:var(--muted);margin-bottom:20px;flex:1;}
+
+  .btn{
+    align-self:flex-start;
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 20px;
+    border-radius:10px;
+    font-size:14px;font-weight:600;
+    text-decoration:none;
+    color:#04121c;
+    background:linear-gradient(120deg,var(--cyan-soft),var(--cyan));
+    box-shadow:0 10px 24px -12px rgba(56,189,248,.9);
+    transition:transform .2s, filter .2s, box-shadow .2s;
+  }
+  .btn:hover{
+    transform:translateX(3px);
+    filter:brightness(1.08);
+    box-shadow:0 14px 30px -12px rgba(56,189,248,1);
+  }
+  .btn::after{content:"→";font-size:15px;}
+
+  /* 待更新卡片 */
+  .card.pending{
+    border-style:dashed;
+    border-color:rgba(139,163,184,.28);
+    background:rgba(13,26,40,.45);
+  }
+  .card.pending:hover{
+    transform:translateY(-3px);
+    border-color:rgba(245,158,11,.4);
+    box-shadow:0 20px 40px -28px rgba(245,158,11,.6);
+  }
+  .card.pending .dot{
+    color:var(--muted);
+    background:rgba(139,163,184,.1);
+    border-color:rgba(139,163,184,.35);
+  }
+  .card.pending .node-num .line{
+    background:linear-gradient(90deg,rgba(139,163,184,.3),transparent);
+  }
+  .badge{
+    align-self:flex-start;
+    display:inline-flex;align-items:center;gap:7px;
+    padding:8px 16px;border-radius:10px;
+    font-size:13px;font-weight:600;
+    color:var(--amber);
+    background:rgba(245,158,11,.08);
+    border:1px dashed rgba(245,158,11,.45);
+  }
+  .badge::before{
+    content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--amber);
+    animation:pulse 2s infinite;
+  }
+
+  footer{
+    margin-top:56px;
+    padding-top:24px;
+    border-top:1px solid rgba(56,189,248,.12);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-size:12.5px;color:var(--muted);
+  }
+
+  @media (max-width:560px){
+    body{padding:36px 16px 44px;}
+    .grid{grid-template-columns:1fr;}
+    .pipe{margin:28px 0 32px;}
+    .profile{gap:8px;}
+    .chip{padding:7px 14px;font-size:12.5px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="tag">Complex Systems Engineering</div>
+
+  <h1>洲际管道运输系统<br><span class="accent">系统作业合集</span></h1>
+  <p class="sub">围绕洲际管道运输系统展开的系统工程作业，涵盖系统分解、需求分析与定义等阶段。</p>
+
+  <!-- ===== 个人信息 ===== -->
+  <div class="profile">
+    <div class="chip"><b>姓名</b> 宋培源</div>
+    <div class="chip"><b>学号</b> 15241608</div>
+    <div class="chip"><b>班级</b> 152416</div>
+    <div class="chip"><b>课程</b> 复杂系统工程</div>
+  </div>
+
+  <!-- ===== 管道装饰线 ===== -->
+  <div class="pipe">
+    <div class="pipe-track"></div>
+    <div class="pipe-nodes">
+      <span class="node"></span>
+      <span class="node"></span>
+      <span class="node"></span>
+      <span class="node"></span>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>作业列表</h2>
+    <span class="count">2 / 3 已完成</span>
+  </div>
+
+  <div class="grid">
+
+    <!-- 第1次作业 -->
+    <div class="card">
+      <div class="node-num"><span class="dot">01</span><span class="line"></span></div>
+      <h3>系统分解</h3>
+      <p>对洲际管道运输系统进行层次化分解，明确系统边界与各子系统组成。</p>
+      <a class="btn" href="homework01/hw01.html" target="_blank" rel="noopener">查看作业</a>
+    </div>
+
+    <!-- 第2次作业 -->
+    <div class="card">
+      <div class="node-num"><span class="dot">02</span><span class="line"></span></div>
+      <h3>需求分析与定义</h3>
+      <p>梳理系统干系人需求，完成需求分析与需求定义。</p>
+      <a class="btn" href="homework01/hw02.html" target="_blank" rel="noopener">查看作业</a>
+    </div>
+
+    <!-- 第3次作业：待更新 -->
+    <div class="card pending">
+      <div class="node-num"><span class="dot">03</span><span class="line"></span></div>
+      <h3>待更新</h3>
+      <p>第三次作业尚未发布，完成后将在此更新。</p>
+      <span class="badge">待更新</span>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>宋培源 · 复杂系统工程</span>
+    <span>洲际管道运输系统 © 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>
