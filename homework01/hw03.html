@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     系统工程 · 小组作业 3
+     真空管道洲际运输系统（VPTS）系统定义与需求规格
+     单文件 HTML：样式、内容、Mermaid 控制框图均内嵌
+     说明：未标注来源的量化指标均为【作业推演】，用于课程讨论
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>真空管道洲际运输系统 · 系统定义与需求规格</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23060F18'/%3E%3Cpath d='M6 22h20M8 22a8 8 0 0 1 16 0' stroke='%23E4A552' stroke-width='2' fill='none'/%3E%3Ccircle cx='16' cy='12' r='2.2' fill='%235BC6C4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://miaoda.feishu.cn">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&amp;family=Noto+Serif+SC:wght@400;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+:root{
+  --bg:#060F18; --bg2:#0A1723; --panel:#0D1B28; --panel2:#102233;
+  --paper:#F4EEE2; --paper2:#EDE4D3; --ink:#1B2731; --ink2:#42525F;
+  --amber:#E4A552; --amber2:#C8862F; --cyan:#5BC6C4; --red:#D96A5D;
+  --text:#D8E3EC; --dim:#8EA5B7; --line:rgba(150,181,204,.16); --line2:rgba(150,181,204,.30);
+  --serif:"Noto Serif SC","Songti SC",Georgia,serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  --max:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:86px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:400;line-height:1.75;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  linear-gradient(rgba(150,181,204,.035) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(150,181,204,.035) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.35) 60%,transparent 100%)}
+::selection{background:rgba(228,165,82,.28)}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 28px;position:relative;z-index:1}
+
+/* ---------- top nav ---------- */
+.top{position:sticky;top:0;z-index:60;background:rgba(6,15,24,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:34px;height:68px}
+.brand{display:flex;align-items:center;gap:11px;flex:0 0 auto}
+.mark{width:27px;height:27px;border:1px solid var(--amber);display:grid;place-items:center;position:relative}
+.mark::before,.mark::after{content:"";position:absolute;background:var(--cyan)}
+.mark::before{width:15px;height:1px;top:12px;left:5px}
+.mark::after{width:1px;height:15px;left:12px;top:5px;opacity:.55}
+.brand-t{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--amber);line-height:1.2}
+.brand-s{display:block;font-family:var(--sans);font-size:11px;color:var(--dim);letter-spacing:.06em;margin-top:3px}
+.nav{display:flex;align-items:center;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{position:relative;flex:0 0 auto;padding:22px 11px;font-size:12px;color:var(--dim);letter-spacing:.02em;white-space:nowrap;transition:color .2s}
+.nav a span{font-family:var(--mono);font-size:9.5px;color:rgba(228,165,82,.7);margin-right:6px}
+.nav a:hover{color:var(--text)}
+.nav a.active{color:var(--amber)}
+.nav a.active::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:2px;background:var(--amber)}
+.prog{height:2px;background:transparent}
+.prog i{display:block;height:2px;width:0;background:linear-gradient(90deg,var(--amber),var(--cyan))}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:620px;display:flex;align-items:flex-end;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero-bg{position:absolute;inset:0;background:url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80") center 42%/cover no-repeat;filter:saturate(.7)}
+.hero-bg::after{content:"";position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(6,15,24,.98) 0%,rgba(6,15,24,.88) 42%,rgba(6,15,24,.38) 100%),
+  linear-gradient(0deg,rgba(6,15,24,1) 0%,rgba(6,15,24,.25) 52%,rgba(6,15,24,.55) 100%)}
+.hero-in{position:relative;z-index:2;width:100%;padding:104px 0 54px}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--cyan);margin-bottom:22px}
+.kicker b{color:var(--amber);font-weight:400}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(46px,6.2vw,82px);line-height:1.13;letter-spacing:.01em;margin:0;color:#F2F6FA}
+.hero h1 em{font-style:normal;color:var(--amber);display:block}
+.hero-sub{max-width:660px;margin:24px 0 0;font-size:15.5px;line-height:1.9;color:#B9CAD7}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;padding:5px 9px;border:1px solid var(--line2);color:#A9BECC;background:rgba(255,255,255,.03)}
+.tag.hot{border-color:rgba(228,165,82,.55);color:var(--amber)}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:52px;border-top:1px solid var(--line2);max-width:880px}
+.hs{padding:20px 20px 4px 0;border-right:1px solid var(--line)}
+.hs:last-child{border-right:0}
+.hs b{display:block;font-family:var(--serif);font-size:32px;font-weight:600;color:#EFF4F8;line-height:1.2}
+.hs b small{font-family:var(--sans);font-size:11px;color:var(--dim);margin-left:6px;font-weight:400}
+.hs span{font-size:10.5px;color:var(--dim);letter-spacing:.04em}
+.hero-foot{position:absolute;right:28px;bottom:24px;z-index:2;font-family:var(--mono);font-size:9px;color:rgba(180,200,212,.55);writing-mode:vertical-rl;letter-spacing:.18em}
+
+/* ---------- section shell ---------- */
+main{position:relative;z-index:1}
+section.ch{padding:86px 0 30px;scroll-margin-top:86px}
+.sec-head{display:grid;grid-template-columns:78px 1fr;gap:20px;align-items:start;margin-bottom:30px}
+.sec-no{font-family:var(--serif);font-size:58px;line-height:.95;color:var(--amber);font-weight:600}
+.sec-title h2{font-family:var(--serif);font-size:36px;line-height:1.25;margin:0;color:#F1F5F8;font-weight:600}
+.sec-en{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--cyan);margin-top:8px;text-transform:uppercase}
+.sec-lead{max-width:820px;margin:16px 0 0;font-size:14px;line-height:1.85;color:#A8BCCB}
+.sec-meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:14px;font-family:var(--mono);font-size:9px;color:#758B9B;letter-spacing:.05em}
+
+.paper{position:relative;background:var(--paper);color:var(--ink);border:1px solid #D9CCB5;box-shadow:0 30px 70px rgba(0,0,0,.28);padding:46px 48px 42px;overflow:hidden}
+.paper::before{content:"";position:absolute;inset:0;pointer-events:none;background:
+  linear-gradient(rgba(27,39,49,.035) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(27,39,49,.035) 1px,transparent 1px);background-size:22px 22px}
+.paper>*{position:relative;z-index:1}
+.paper-head{display:flex;justify-content:space-between;gap:18px;padding-bottom:14px;border-bottom:1px solid #CBBDA5;font-family:var(--mono);font-size:9.5px;color:#74685A;letter-spacing:.07em;margin-bottom:34px}
+.paper h3{font-family:var(--serif);font-size:25px;line-height:1.4;margin:0 0 4px;color:#17232D;font-weight:600}
+.paper h4{font-size:15px;margin:34px 0 10px;color:#20303C;font-weight:600;letter-spacing:.01em}
+.paper h4 .h4n{font-family:var(--mono);font-size:10px;color:var(--amber2);margin-right:9px;letter-spacing:.04em}
+.paper p{margin:10px 0;font-size:13.6px;line-height:1.92;color:#28353F}
+.paper p.lead{font-size:14.2px;color:#394955}
+.paper strong{color:#13202A;font-weight:600}
+.small{font-size:11.5px!important;color:#6A5E50!important;line-height:1.75!important}
+.note{border-left:2px solid var(--amber2);background:rgba(200,134,47,.07);padding:11px 14px;margin:16px 0;font-size:12.2px;line-height:1.8;color:#5A4B3A}
+.note b{color:#8B5A19}
+
+/* ---------- generic tables ---------- */
+.tw{overflow-x:auto;margin:14px 0 6px;border:1px solid #D4C6AE;background:rgba(255,255,255,.22)}
+table{border-collapse:collapse;width:100%;font-size:12.4px;line-height:1.65;color:#24313B}
+table th,table td{border:1px solid #D9CCB5;padding:8px 9px;vertical-align:top;text-align:left}
+table th{background:#E7DCC8;color:#3D3222;font-weight:600;font-size:11.4px}
+table tbody tr:nth-child(even){background:rgba(255,255,255,.28)}
+table .id{font-family:var(--mono);font-size:10.5px;color:#8A5B1C;white-space:nowrap}
+table .c{text-align:center;white-space:nowrap}
+table .nowrap{white-space:nowrap}
+.tb{min-width:700px}
+.tb.table-lite{min-width:520px}
+.ts{min-width:560px}
+.req{min-width:860px}
+.req2{min-width:640px}
+.type{display:inline-block;font-family:var(--mono);font-size:9px;padding:1px 5px;border:1px solid #B9A98E;color:#5B4B37;background:#EFE6D4}
+.type.d{border-color:#9B732E;color:#7A5415}
+.type.a{border-color:#3E7E78;color:#2E625D}
+.type.i{border-color:#6C7D8D;color:#4A5B6B}
+.pill{display:inline-block;font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:2px;background:#E7DCC8;color:#5B4B37}
+.pill.red{background:#F0D3CD;color:#8B3228}
+.pill.amber{background:#F4E2C4;color:#855A1B}
+.pill.green{background:#D8E9E3;color:#2D6259}
+.pill.gray{background:#E4E7EA;color:#4F5C67}
+
+/* ---------- cards ---------- */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:16px 0}
+.card{background:rgba(255,255,255,.34);border:1px solid #D6C8B0;padding:15px 16px;transition:background .25s,transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{background:#FFFBF2;border-color:var(--amber2);transform:translateY(-2px);box-shadow:0 8px 22px rgba(80,55,20,.12)}
+.card b{display:block;font-size:12.5px;color:#21303A;margin-bottom:5px;letter-spacing:.02em}
+.card span{display:block;font-size:11.8px;line-height:1.75;color:#4D5C67}
+.card .cn{font-family:var(--mono);font-size:9px;color:#9A6A25;letter-spacing:.08em;margin-bottom:6px}
+.scope-do{border-top:2px solid #3E7E78}
+.scope-no{border-top:2px solid #B0594E}
+.scope-ben{border-top:2px solid #B98A3E}
+
+/* ---------- callout / quote ---------- */
+.quote{margin:18px 0;padding:20px 24px;background:#ECE2CF;border-left:3px solid var(--amber2)}
+.quote p{margin:0;font-family:var(--serif);font-size:15px;line-height:1.95;color:#3D3021}
+.quote .q-src{font-family:var(--mono);font-size:9px;color:#8B7355;margin-top:10px;letter-spacing:.06em}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:0;border-top:1px solid #D4C6AE;margin:14px 0}
+.kv>div{padding:9px 12px;border-bottom:1px solid #DDD0BA;font-size:12.2px;line-height:1.7}
+.kv>div:nth-child(odd){background:#EBE1CE;font-family:var(--mono);font-size:10px;color:#715B3D;letter-spacing:.02em}
+.kv>div:nth-child(even){color:#2B3842}
+
+/* ---------- mermaid ---------- */
+.diagram{background:#FBF7EF;border:1px solid #CDBE9F;padding:22px 14px;margin:18px 0;overflow-x:auto}
+.diagram .cap{font-family:var(--mono);font-size:9px;color:#806B4E;letter-spacing:.1em;text-align:center;margin-bottom:12px}
+.mermaid{min-width:780px;text-align:center;color:#1B2731;font-family:var(--sans)}
+.mermaid svg{max-width:100%;height:auto}
+.mermaid-fallback{display:none;padding:16px;font-size:12px;color:#6B4A2A;background:#F6E8CE;border:1px dashed #C89E57;margin-top:10px}
+
+/* ---------- footer ---------- */
+footer{margin-top:70px;border-top:1px solid var(--line);padding:34px 0 46px;background:rgba(9,20,31,.72)}
+.foot-in{max-width:var(--max);margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.foot-t{font-family:var(--mono);font-size:9px;color:#758B9B;letter-spacing:.08em;line-height:2}
+.foot-r{font-family:var(--mono);font-size:9px;color:#758B9B;text-align:right;line-height:2}
+#toTop{position:fixed;right:20px;bottom:22px;z-index:50;width:38px;height:38px;border:1px solid var(--line2);background:rgba(13,27,40,.9);color:var(--amber);font-family:var(--mono);font-size:14px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s}
+#toTop.on{opacity:1;pointer-events:auto}
+
+/* ---------- responsive ---------- */
+@media(max-width:1080px){
+  .hero-stats{grid-template-columns:repeat(2,1fr);max-width:680px}
+  .hs:nth-child(2){border-right:0}
+  .hs:nth-child(1),.hs:nth-child(2){border-bottom:1px solid var(--line)}
+  .paper{padding:38px 34px}
+  .sec-head{grid-template-columns:60px 1fr}
+  .sec-no{font-size:46px}
+  .sec-title h2{font-size:31px}
+}
+@media(max-width:760px){
+  .top-in{height:auto;padding:10px 16px 0;flex-wrap:wrap;gap:0 16px}
+  .brand{padding-bottom:8px}
+  .nav{order:3;width:100%;margin-left:0;gap:0}
+  .nav a{padding:10px 4px 12px;font-size:10.5px;letter-spacing:0}
+  .nav a span{display:none}
+  .nav a.active::after{left:8px;right:8px;height:1.5px}
+  .hero{min-height:560px}
+  .hero-in{padding:74px 0 42px}
+  .hero-sub{font-size:14px}
+  .hero-tags{gap:6px}
+  .hero-stats{grid-template-columns:repeat(2,1fr);margin-top:34px}
+  .hs b{font-size:24px}
+  .hs{padding:14px 10px 2px 0}
+  .hero-foot{display:none}
+  .wrap{padding:0 16px}
+  section.ch{padding:58px 0 18px}
+  .sec-head{grid-template-columns:1fr;gap:8px}
+  .sec-no{font-size:30px;line-height:1}
+  .sec-title h2{font-size:25px}
+  .sec-en{font-size:8.5px}
+  .paper{padding:26px 18px 24px;margin:0 -4px}
+  .paper-head{flex-direction:column;gap:2px;margin-bottom:24px}
+  .paper h3{font-size:21px}
+  .paper p{font-size:12.6px}
+  .grid3,.grid2{grid-template-columns:1fr}
+  .kv{grid-template-columns:110px 1fr}
+  .tb,.req,.req2{min-width:680px}
+  .tb.table-lite{min-width:480px}
+  .diagram{padding:12px 8px}
+  .mermaid{min-width:720px}
+  #toTop{display:none}
+  .foot-in{padding:0 16px}
+  .foot-r{text-align:left}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .card{transition:none}
+}
+</style>
+</head>
+<body id="top">
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#top" aria-label="回到页首">
+      <span class="mark" aria-hidden="true"></span>
+      <span class="brand-t">VPTS / SYRS<span class="brand-s">真空管道洲际运输系统</span></span>
+    </a>
+    <nav class="nav" aria-label="章节导航">
+      <a href="#ch1"><span>01</span>目录与概述</a>
+      <a href="#ch2"><span>02</span>系统需求</a>
+      <a href="#ch3"><span>03</span>初始系统架构</a>
+      <a href="#ch4"><span>04</span>控制结构</a>
+      <a href="#ch5"><span>05</span>安全分析</a>
+      <a href="#ch6"><span>06</span>安全需求</a>
+    </nav>
+  </div>
+  <div class="prog"><i id="progBar"></i></div>
+</header>
+
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-in">
+    <div class="wrap">
+      <div class="kicker"><b>SYSTEMS ENGINEERING</b> / ASSIGNMENT 03 · SYSTEM DEFINITION</div>
+      <h1>真空管道<em>洲际运输系统</em></h1>
+      <p class="hero-sub">在机场、港口与铁路逐渐饱和之后，用一条低阻力的跨洲管廊把客运与货运的时间成本压到小时级；同时把管廊作为能源、科研与后续轨道延伸的共用结构骨架。</p>
+      <div class="hero-tags">
+        <span class="tag hot">SyRS · ISO/IEC/IEEE 29148:2018 表 5-1</span>
+        <span class="tag">系统定义</span>
+        <span class="tag">初始架构</span>
+        <span class="tag">安全分析</span>
+        <span class="tag">Mermaid 控制框图</span>
+      </div>
+      <div class="hero-stats" role="list" aria-label="系统量级">
+        <div class="hs" role="listitem"><b>5,000<small>km 量级</small></b><span>跨洲干线长度【推演】</span></div>
+        <div class="hs" role="listitem"><b>1,200<small>km/h</small></b><span>巡航速度 · 峰值 1,500【推演】</span></div>
+        <div class="hs" role="listitem"><b>200<small>人 / 舱</small></b><span>客运额定 · 货运 60 t【推演】</span></div>
+        <div class="hs" role="listitem"><b>≤10<small>Pa</small></b><span>正常压力 · 分级报警【推演】</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot" aria-hidden="true">VPTS · CONCEPT BASELINE · 2026-11-25</div>
+</section>
+
+<main class="wrap">
+
+<!-- ================= 01 ================= -->
+<section class="ch" id="ch1" data-sec="ch1">
+  <div class="sec-head">
+    <div class="sec-no">01</div>
+    <div class="sec-title">
+      <h2>目录与系统概述</h2>
+      <div class="sec-en">Contents &amp; System Overview</div>
+      <p class="sec-lead">本章说明作业范围与文档结构，并把给定的系统目的、系统范围与系统概述整理成后续需求与架构的共同基线。</p>
+      <div class="sec-meta"><span>文档编号 VPTS-SyRS-001</span><span>版本 0.3</span><span>状态 概念基线 · 待评审</span><span>依据 第 5 章 · 表 5-1</span></div>
+    </div>
+  </div>
+
+  <div class="paper">
+    <div class="paper-head"><span>VPTS / SYSTEM DEFINITION</span><span>01 · CONTENTS &amp; OVERVIEW</span></div>
+
+    <h4><span class="h4n">1.1</span>作业简介</h4>
+    <p class="lead">本作业针对“真空管道洲际运输系统”完成系统定义：把业务侧给出的目的与范围转成可验证的系统需求，给出初始功能、逻辑与物理架构，并用控制框图说明调度、真空、舱体与安全联锁之间的关系。</p>
+    <p>文档结构按课程要求固定为六章。第 1 章建立系统边界与用户基线；第 2 章按 ISO/IEC/IEEE 29148:2018 的 SyRS 轮廓展开；第 3 章给出三视图架构与两套备选方案；第 4 章说明控制结构；第 5、6 章完成风险识别、RainingDay 场景与安全需求派生。</p>
+
+    <div class="tw">
+      <table class="tb table-lite">
+        <thead><tr><th style="width:14%">章节</th><th style="width:31%">内容</th><th style="width:31%">对应标准 / 方法</th><th>主要输出</th></tr></thead>
+        <tbody>
+          <tr><td class="id">01</td><td>目录与系统概述</td><td>SyRS 1.1—1.3</td><td>目的、范围、上下文、功能与用户</td></tr>
+          <tr><td class="id">02</td><td>系统需求</td><td>表 5-1 第 1—3 章</td><td>功能、可用性、性能、接口、模式、约束等需求</td></tr>
+          <tr><td class="id">03</td><td>初始系统架构</td><td>功能—逻辑—物理三视图；权衡分析</td><td>架构元素、五类交互、接口、两套备选方案</td></tr>
+          <tr><td class="id">04</td><td>系统控制结构</td><td>分层控制；闭环与联锁</td><td>Mermaid 控制框图与控制逻辑</td></tr>
+          <tr><td class="id">05</td><td>系统安全分析</td><td>风险识别；RainingDay 建模</td><td>风险表、风险矩阵、异常场景</td></tr>
+          <tr><td class="id">06</td><td>系统安全需求</td><td>由风险派生安全需求</td><td>安全功能、性能、接口与非功能需求</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">1.2</span>系统目的</h4>
+    <div class="quote">
+      <p>在机场、港口、铁路三种洲际通道逐渐饱和的背景下，建设第四条骨干通道。系统以真空环境消除空气阻力，以磁浮导向消除轮轨摩擦，把跨洲运输的时间成本压到小时级；管廊本身作为结构骨架，为能源输配、科研实验与后续轨道延伸提供共用基础。</p>
+      <div class="q-src">依据给定业务设定改写 · 不改变原意</div>
+    </div>
+    <p>这个目的包含两层：第一层是运输服务，即用一条不受既有枢纽容量与航权限制的陆上通道，提供稳定的跨洲客运和夜间货运能力；第二层是基础设施复用，即管廊不只服务运输，还为沿线的能源、科研与未来扩展预留接口。</p>
+    <p>目的能否成立，取决于三个条件：管段长期维持低压力环境的成本可控；舱体在高速下的悬浮、导向与制动足够可靠；跨多个法域的许可、关税与应急责任可以事先约定。这三项条件在后续章节分别落到性能需求、安全需求与政策法规需求。</p>
+
+    <h4><span class="h4n">1.3</span>系统范围</h4>
+    <p class="lead">系统命名为“真空管道运输系统”（Vacuum Tube Transit System，VPTS）。范围按“做什么 / 不做什么 / 带来什么”三条边界界定，避免后续把站内商业、城市接驳和延伸段混入本期基线。</p>
+    <div class="grid3">
+      <div class="card scope-do"><div class="cn">IN SCOPE · 01</div><b>系统做什么</b><span>在选定站点之间提供高速客运与夜间货运；在预约时段把指定管段开放为真空实验环境；维持管段真空、隔离故障段并发布运行状态。</span></div>
+      <div class="card scope-no"><div class="cn">OUT OF SCOPE · 02</div><b>系统不做什么</b><span>不承担站内商业运营，不承担城市接驳，不承诺轨道延伸段。延伸段作为衍生方案另行立项，不进入本期需求基线。</span></div>
+      <div class="card scope-ben"><div class="cn">BENEFIT · 03</div><b>应用与收益</b><span>跨洲通勤时间下降；沿线形成以站点为核心的节点城市；能源与科研共用管廊，降低单位投资与重复开挖。</span></div>
+    </div>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:20%">边界对象</th><th style="width:38%">纳入本期</th><th>排除或另立项</th></tr></thead>
+        <tbody>
+          <tr><td>运输服务</td><td>站到站客运、夜间整舱货运、科研窗口</td><td>站内商业、行李配送、城市末端接驳</td></tr>
+          <tr><td>基础设施</td><td>干线管段、泵站、隔离闸门、站点停靠设施、调度中心</td><td>轨道延伸段、支线网络、沿线房地产开发</td></tr>
+          <tr><td>接口</td><td>外部电网、海关边检、既有交通换乘、科研机构</td><td>城市公交调度、港口装卸作业、航空管制系统</td></tr>
+          <tr><td>生存周期</td><td>设计、建设、调试、运行、维护、弃置</td><td>运营期商业招商与广告经营</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">1.4</span>系统概述</h4>
+    <p class="lead">系统处在“大洲运营商—跨洲管委会—站点运营单元”三层组织之中。内部由管段、泵组、闸门、舱体、调度中心五类要素构成；外部与电网、海关边检、既有交通方式、科研机构相连。</p>
+
+    <h4 style="margin-top:26px"><span class="h4n">1.4.1</span>系统上下文</h4>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:20%">外部对象</th><th style="width:34%">与本系统的关系</th><th>主要接口内容</th></tr></thead>
+        <tbody>
+          <tr><td>大洲运营商</td><td>提出运输能力与商业目标，承担投资与运营责任</td><td>年度运输计划、服务等级、财务与保险要求</td></tr>
+          <tr><td>跨洲管委会</td><td>协调多法域许可、关税、安全监管与应急责任</td><td>许可文件、跨境规则、事故通报与联合演练</td></tr>
+          <tr><td>站点运营单元</td><td>负责站内旅客服务、货物周转与设备值守</td><td>值机、安检、登乘、装卸、站台状态</td></tr>
+          <tr><td>外部电网</td><td>提供泵组、牵引与站用电力，接受调度指令</td><td>双回路供电、需量响应、孤岛与备电信号</td></tr>
+          <tr><td>海关与边检</td><td>对跨境旅客、货物与舱体封志实施监管</td><td>舱单、旅客名单、封志、查验结果</td></tr>
+          <tr><td>既有交通方式</td><td>承担站点到城市、机场与港口的换乘</td><td>到发时刻、换乘引导、延误信息</td></tr>
+          <tr><td>科研机构</td><td>预约使用管段的真空、低振动与屏蔽环境</td><td>实验窗口、真空度、振动与电磁指标</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">1.4.2</span>核心系统功能</h4>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:10%">编号</th><th style="width:25%">给定功能</th><th>功能展开</th></tr></thead>
+        <tbody>
+          <tr><td class="id">F-01</td><td>站间运送</td><td>在站间完成舱体加速、巡航、减速与停靠，全过程由系统自身导向与制动，不依赖外部牵引。</td></tr>
+          <tr><td class="id">F-02</td><td>真空维持</td><td>维持管内真空并连续监测压力与漏率；压力越限或漏率异常时自动隔离故障管段，阻止新舱进入。</td></tr>
+          <tr><td class="id">F-03</td><td>多模式调度</td><td>按日间客运、夜间货运、科研窗口三种占用模式分配管段与站点资源，支持计划调整与冲突消解。</td></tr>
+          <tr><td class="id">F-04</td><td>状态广播</td><td>向站点、海关、换乘方式与公众提供计划、延误、事故与恢复状态；事故时按预案完成通报。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">1.4.3</span>四类用户特征</h4>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:16%">用户</th><th style="width:14%">使用频次</th><th style="width:30%">能力与限制</th><th>对系统的设计含义</th></tr></thead>
+        <tbody>
+          <tr><td>乘客</td><td>一次性</td><td>无专业培训，跨语言，携带行李，可能行动不便</td><td>人机界面高度易用；登乘、疏散与异常提示不依赖专业判断</td></tr>
+          <tr><td>运维人员</td><td>日常值守</td><td>具备设备检修与隔离权限，熟悉管路与泵组</td><td>提供分区隔离、挂牌上锁、检修窗口与备件追溯</td></tr>
+          <tr><td>调度员</td><td>连续值班</td><td>需要全局态势，能在降级与应急下决策</td><td>提供全局视图、冲突预警、预案提示与操作审计</td></tr>
+          <tr><td>科研用户</td><td>预约制</td><td>对真空度、振动、电磁与温湿度高度敏感</td><td>提供实验窗口、指标看板、数据导出与时段锁定</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><b>边界说明：</b>本章只界定“系统要解决什么”，不规定采用何种泵、何种悬浮或何种材料。具体实现方案在第 3 章架构与第 4 章控制结构中讨论；所有量化指标标注【作业推演】，待可行性研究阶段校准。</div>
+  </div>
+</section>
+
+<!-- ================= 02 ================= -->
+<section class="ch" id="ch2" data-sec="ch2">
+  <div class="sec-head">
+    <div class="sec-no">02</div>
+    <div class="sec-title">
+      <h2>系统需求</h2>
+      <div class="sec-en">System Requirements Specification · ISO/IEC/IEEE 29148 Table 5-1</div>
+      <p class="sec-lead">按表 5-1 的 SyRS 轮廓展开。每条需求只描述“系统应做到什么”，并给出类型、追溯与验证方法，不提前锁定实现方案。</p>
+      <div class="sec-meta"><span>标准 ISO/IEC/IEEE 29148:2018</span><span>需求语言 应 / 宜</span><span>验证 A / I / D / T</span></div>
+    </div>
+  </div>
+
+  <div class="paper">
+    <div class="paper-head"><span>VPTS / SyRS</span><span>02 · TABLE 5-1 OUTLINE</span></div>
+
+    <h4><span class="h4n">2.0</span>SyRS 轮廓与编写规则</h4>
+    <p class="lead">表 5-1 把 SyRS 分为简介、参考、系统需求、验证与附录五部分。本文件把“简介”放在第 1 章，本章从定义与参考开始，逐项覆盖 3.1—3.13，最后给出验证矩阵与假设。</p>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:22%">表 5-1 章节</th><th style="width:30%">本文件位置</th><th>处理方式</th></tr></thead>
+        <tbody>
+          <tr><td>1 简介（1.1—1.3）</td><td>第 1 章</td><td>系统目的、范围、环境、功能、用户</td></tr>
+          <tr><td>1.4 定义 / 2 参考</td><td>2.0.1 / 2.0.2</td><td>术语表与依据文件</td></tr>
+          <tr><td>3 系统需求（3.1—3.13）</td><td>3.1—3.13</td><td>按功能、可用性、性能、接口等逐类展开</td></tr>
+          <tr><td>4 验证</td><td>4</td><td>与第 3 章逐条对应，给出 A/I/D/T 方法</td></tr>
+          <tr><td>5 附录</td><td>5.1 / 5.2</td><td>假设与依赖、缩写与缩略语</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>编写规则：</strong>① 一条需求只写一个可验证的结果，避免“快速、友好、尽可能”等无法判定的词；② “应”表示强制，“宜”表示建议；③ 需求描述结果与约束，不描述具体设备型号；④ 每条需求有唯一编号，能被追溯到一个能力、风险或上层文件；⑤ 需求之间出现冲突时，按“安全 &gt; 合规 &gt; 可用性 &gt; 效率”的顺序处理，并在评审记录中留痕。</p>
+
+    <h4><span class="h4n">2.0.1</span>定义</h4>
+    <div class="tw">
+      <table class="tb table-lite">
+        <thead><tr><th style="width:20%">术语</th><th>在本文件中的含义</th></tr></thead>
+        <tbody>
+          <tr><td>能力（Capability）</td><td>系统在给定条件下完成一类任务的本领，回答“能达成什么结果”，不描述具体行为序列。</td></tr>
+          <tr><td>功能（Function）</td><td>把输入转换为输出的行为，回答“系统做什么”；一个能力通常由一组功能共同实现。</td></tr>
+          <tr><td>分解型需求</td><td>由上层需求按工作原理、运行过程与完备性法则分解得到，回答“要完成这件事，需要哪些子行为”。</td></tr>
+          <tr><td>分配型需求</td><td>把总指标（时间、功耗、质量、可靠性等）分配到不同要素，回答“每个要素承担多少”。</td></tr>
+          <tr><td>继承型需求</td><td>直接继承法规、标准、规范或合同条款，回答“外部已经规定了什么”。</td></tr>
+          <tr><td>五类交互要素</td><td>信号、数据、物质、能量、活动；用于检查功能分解是否遗漏输入、转换或输出。</td></tr>
+          <tr><td>完备性法则</td><td>系统要稳定实现功能，必须具备执行装置、传动装置、动力装置、控制装置，以及必要的物质、能量、信息与职能联系。</td></tr>
+          <tr><td>RainingDay</td><td>超出日常运行假设的异常场景；在系统定义早期识别并建模，避免把问题带到后期。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">2.0.2</span>参考</h4>
+    <div class="tw">
+      <table class="tb table-lite">
+        <thead><tr><th style="width:26%">编号</th><th>文件 / 标准</th><th style="width:20%">用途</th></tr></thead>
+        <tbody>
+          <tr><td class="id">R-01</td><td>ISO/IEC/IEEE 29148:2018 系统与软件工程 — 生存周期过程 — 需求工程</td><td>SyRS 轮廓与需求质量</td></tr>
+          <tr><td class="id">R-02</td><td>ISO/IEC/IEEE 15288:2023 系统生存周期过程</td><td>系统定义与架构过程</td></tr>
+          <tr><td class="id">R-03</td><td>郭宝柱《系统工程：基于国际标准过程的研究与实践》第 5 章</td><td>需求类型、完备性、五类交互、RainingDay</td></tr>
+          <tr><td class="id">R-04</td><td>本课程作业给定的系统目的、范围与概述</td><td>业务基线</td></tr>
+          <tr><td class="id">R-05</td><td>IEC 61508 功能安全基础标准</td><td>安全联锁的独立性与 SIL 思路</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.1</span>功能需求</h4>
+    <p class="lead">先把“能力”与“功能”分开：能力描述系统能带来什么结果，功能描述为得到该结果必须完成哪些转换。下表先建立能力—功能映射，再给出功能需求。</p>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:18%">能力</th><th style="width:38%">能力描述</th><th>支撑功能</th></tr></thead>
+        <tbody>
+          <tr><td class="id">C-01</td><td>在跨洲站点间按计划运送旅客，站到站时间控制在小时级</td><td>F-01 加速巡航减速停靠；F-05 客运组织；F-11 站内周转</td></tr>
+          <tr><td class="id">C-02</td><td>在夜间提供大批量、可追踪的货运能力</td><td>F-01；F-06 货运组织；F-14 跨境查验</td></tr>
+          <tr><td class="id">C-03</td><td>长期维持管段低压力环境，并识别漏率变化</td><td>F-02 真空维持；F-03 异常隔离；F-13 能源保障</td></tr>
+          <tr><td class="id">C-04</td><td>在客运、货运、科研、降级与检修之间安全切换</td><td>F-04 模式调度；F-08 科研窗口；F-12 运维支持</td></tr>
+          <tr><td class="id">C-05</td><td>把故障限制在局部管段，避免影响全线</td><td>F-03；F-10 事故通报；F-12</td></tr>
+          <tr><td class="id">C-06</td><td>向外部提供可信的运行状态与事故信息</td><td>F-09 状态广播；F-10；F-15 数据记录</td></tr>
+          <tr><td class="id">C-07</td><td>把管廊作为能源、科研与延伸段的共用骨架</td><td>F-08；F-13；F-14；预留接口</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:48%">需求陈述</th><th style="width:8%">类型</th><th style="width:12%">追溯</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">FR-01</td><td>系统应能在选定站点之间完成舱体的加速、巡航、减速与停靠全过程，且全过程不依赖外部牵引。</td><td class="c"><span class="type d">D</span></td><td>C-01 / F-01</td><td>T 全线试运</td></tr>
+          <tr><td class="id">FR-02</td><td>系统应支持同一管段内多舱按时刻表连续运行，并始终满足规定的最小安全间隔。</td><td class="c"><span class="type d">D</span></td><td>C-01 / F-01</td><td>T 追踪运行</td></tr>
+          <tr><td class="id">FR-03</td><td>系统应连续维持管内压力在工作范围内，并按管段、按时间记录压力与漏率。</td><td class="c"><span class="type d">D</span></td><td>C-03 / F-02</td><td>T 长时保压</td></tr>
+          <tr><td class="id">FR-04</td><td>当压力越限或漏率变化超过阈值时，系统应自动隔离故障管段，阻止新舱进入，并向调度中心报警。</td><td class="c"><span class="type d">D</span></td><td>C-03 / C-05</td><td>T 注入漏率试验</td></tr>
+          <tr><td class="id">FR-05</td><td>系统应在日间按客运时刻表组织值机、安检、登乘、运送、下车与行李交付。</td><td class="c"><span class="type d">D</span></td><td>C-01 / F-05</td><td>D 客运演练</td></tr>
+          <tr><td class="id">FR-06</td><td>系统应在夜间按货运计划完成舱体装载、固定、计重、封志与卸载。</td><td class="c"><span class="type d">D</span></td><td>C-02 / F-06</td><td>D 货运演练</td></tr>
+          <tr><td class="id">FR-07</td><td>系统应能在预约时段把指定管段转入科研实验环境，并维持真空度、振动与电磁指标。</td><td class="c"><span class="type d">D</span></td><td>C-04 / C-07</td><td>T 实验窗口演示</td></tr>
+          <tr><td class="id">FR-08</td><td>系统应能在客运、货运、科研、降级与检修模式之间切换，并在切换前确认管段空闲与联锁条件满足。</td><td class="c"><span class="type d">D</span></td><td>C-04 / F-04</td><td>T 模式切换</td></tr>
+          <tr><td class="id">FR-09</td><td>系统应向站点、换乘方式与公众发布计划、延误、事故与恢复状态，发布时间与内容按预案定义。</td><td class="c"><span class="type d">D</span></td><td>C-06 / F-09</td><td>D 广播演练</td></tr>
+          <tr><td class="id">FR-10</td><td>事故发生后，系统应按预案向站点、海关、应急机构与运营管理层通报，并持续更新处置状态。</td><td class="c"><span class="type d">D</span></td><td>C-05 / C-06</td><td>D 通报演练</td></tr>
+          <tr><td class="id">FR-11</td><td>舱体到站后，系统应完成开门、上下客或货、清洁、检查与再发车准备，并确认站台门与舱门对准。</td><td class="c"><span class="type d">D</span></td><td>C-01 / F-11</td><td>D 站内周转</td></tr>
+          <tr><td class="id">FR-12</td><td>系统应支持不停运检修与分区抽真空，使检修段可在不影响其余管段的前提下隔离、进入与恢复。</td><td class="c"><span class="type d">D</span></td><td>C-04 / F-12</td><td>D 检修演练</td></tr>
+          <tr><td class="id">FR-13</td><td>系统应从外部电网获取电能，并在失电时按“安全负载—疏散—关键通信—恢复”的顺序保障供电。</td><td class="c"><span class="type a">A</span></td><td>C-03 / F-13</td><td>T 失电试验</td></tr>
+          <tr><td class="id">FR-14</td><td>系统应与海关边检交换舱单、封志与旅客名单，支持联合查验与异常舱体的二次检查。</td><td class="c"><span class="type d">D</span></td><td>C-02 / F-14</td><td>D 跨境查验演练</td></tr>
+          <tr><td class="id">FR-15</td><td>系统应记录运行、安全、计量与查验数据，使任一舱次可在规定期限内追溯。</td><td class="c"><span class="type d">D</span></td><td>C-06 / F-15</td><td>I 数据抽查</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">注：D＝分解型，A＝分配型，I＝继承型；验证栏 A＝分析、I＝检查、D＝演示、T＝测试。下同。</p>
+    <h4><span class="h4n">3.2</span>可用性需求</h4>
+    <p class="lead">可用性关注“不同用户能否在真实条件下完成自己的任务”。乘客与科研用户的使用频次低，界面不能依赖专业判断；调度与运维人员则需要在压力下快速获得全局态势。</p>
+    <div class="tw">
+      <table class="req2">
+        <thead><tr><th style="width:8%">编号</th><th style="width:56%">需求陈述</th><th style="width:8%">类型</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">US-01</td><td>首次使用的乘客应能在无人协助下于 5 min 内完成值机、安检引导与登乘定位。</td><td class="c"><span class="type d">D</span></td><td>D 可用性测试</td></tr>
+          <tr><td class="id">US-02</td><td>面向乘客的界面应提供不少于 4 种语言，并在关键步骤使用图形与颜色双重编码，避免只依赖文字。</td><td class="c"><span class="type d">D</span></td><td>I 界面检查</td></tr>
+          <tr><td class="id">US-03</td><td>行动不便、携带大件行李或听力受限的乘客应能独立完成登乘与疏散，不依赖他人临时判断。</td><td class="c"><span class="type d">D</span></td><td>D 无障碍演练</td></tr>
+          <tr><td class="id">US-04</td><td>调度员应能在一个屏幕内看到全线管段、在途舱体、泵组、闸门与报警，并在 30 s 内定位任一异常。</td><td class="c"><span class="type d">D</span></td><td>D 调度演练</td></tr>
+          <tr><td class="id">US-05</td><td>运维人员应能按分区、设备与工单三种方式检索检修对象，并看到隔离状态、挂牌与历史记录。</td><td class="c"><span class="type a">A</span></td><td>D 工单演练</td></tr>
+          <tr><td class="id">US-06</td><td>科研用户应能查看预约窗口内的真空度、振动与电磁指标，并导出原始数据，界面不暴露与实验无关的运行数据。</td><td class="c"><span class="type d">D</span></td><td>D 科研门户演示</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.3</span>性能需求</h4>
+    <p class="lead">性能指标全部为分配型或分解型需求，数值用于建立可验证的量级，不代表最终设计值。指标之间需要满足“安全间隔 &gt; 制动距离”的约束。</p>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:48%">需求陈述</th><th style="width:8%">类型</th><th style="width:14%">追溯</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">PR-01</td><td>系统应支持 5,000 km 量级的连续干线运输，单程站到站时间不超过 5 h（含一次中途停靠）。</td><td class="c"><span class="type a">A</span></td><td>C-01</td><td>A + T</td></tr>
+          <tr><td class="id">PR-02</td><td>巡航速度应不低于 1,200 km/h，短时峰值不低于 1,500 km/h；峰值运行时间连续不超过 2 h。</td><td class="c"><span class="type a">A</span></td><td>C-01 / F-01</td><td>T 试运</td></tr>
+          <tr><td class="id">PR-03</td><td>客运高峰发车间隔应不大于 6 min，单舱额定 200 人；货运高峰应支持每小时 6 舱、每舱 60 t。</td><td class="c"><span class="type a">A</span></td><td>C-01 / C-02</td><td>T 能力测试</td></tr>
+          <tr><td class="id">PR-04</td><td>同一管段内舱体最小追踪间隔应不小于 6 min，且始终大于当前速度下的紧急制动距离。</td><td class="c"><span class="type a">A</span></td><td>C-05</td><td>A 安全间隔分析</td></tr>
+          <tr><td class="id">PR-05</td><td>正常加速与减速的纵向加速度应不超过 0.15 g，加速度变化率应不超过 0.05 g/s；紧急制动减速度应不超过 2.5 m/s²。</td><td class="c"><span class="type a">A</span></td><td>C-01</td><td>T 车载测试</td></tr>
+          <tr><td class="id">PR-06</td><td>正常工作压力应维持在 1—10 Pa；压力达到 30 Pa 应预警，达到 50 Pa 应触发停发与隔离。</td><td class="c"><span class="type a">A</span></td><td>C-03</td><td>T 保压试验</td></tr>
+          <tr><td class="id">PR-07</td><td>正常漏率应不大于 0.05 Pa/h；漏率超过 0.2 Pa/h 或压力上升速率异常时，系统应在 3 s 内识别并定位到 1 km 以内的管段。</td><td class="c"><span class="type a">A</span></td><td>C-03 / C-05</td><td>T 注入试验</td></tr>
+          <tr><td class="id">PR-08</td><td>故障管段隔离后，应在 4 h 内恢复至工作压力；站内登乘区的压力恢复时间应不超过 30 min。</td><td class="c"><span class="type a">A</span></td><td>C-03 / F-12</td><td>T 恢复演练</td></tr>
+          <tr><td class="id">PR-09</td><td>系统年可用率应不低于 99.0%；客运班次准点率应不低于 98%（以计划到发时刻 ±5 min 计）。</td><td class="c"><span class="type a">A</span></td><td>C-01</td><td>A 统计 + T</td></tr>
+          <tr><td class="id">PR-10</td><td>客运单程人均能耗应不高于 0.10 kWh/（人·km）；货运单位能耗应不高于 0.035 kWh/（t·km）。</td><td class="c"><span class="type a">A</span></td><td>C-07</td><td>A 能耗核算</td></tr>
+          <tr><td class="id">PR-11</td><td>系统从外部电网获取的峰值功率应不超过 400 MW；失电后安全负载应由 UPS 维持不少于 2 h，并由备用电源维持不少于 72 h。</td><td class="c"><span class="type a">A</span></td><td>C-03 / F-13</td><td>A + T</td></tr>
+          <tr><td class="id">PR-12</td><td>站台区域噪声应不高于 65 dB(A)；管段外表面 1 m 处振动应不高于 0.2 mm/s（RMS）。</td><td class="c"><span class="type a">A</span></td><td>C-07</td><td>T 环境测试</td></tr>
+          <tr><td class="id">PR-13</td><td>货运舱内温度应保持在 15—25 °C，相对湿度不高于 60%，并记录全程温度曲线。</td><td class="c"><span class="type a">A</span></td><td>C-02</td><td>T 货运测试</td></tr>
+          <tr><td class="id">PR-14</td><td>科研窗口内压力应不高于 1 Pa，背景振动应不高于 0.05 mm/s（RMS），电磁屏蔽效能应不低于 40 dB（1—10 kHz）。</td><td class="c"><span class="type a">A</span></td><td>C-04 / C-07</td><td>T 实验标定</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><b>指标冲突检查：</b>PR-04 的 6 min 追踪间隔对应约 120 km 空间间隔（按 1,200 km/h 计），大于 PR-05 在 1,200 km/h、2.5 m/s² 下的约 22 km 制动距离。该关系为后续控制逻辑留下了安全余量；若速度提高或制动性能下降，必须重新校核。</div>
+
+    <h4><span class="h4n">3.4</span>接口需求</h4>
+    <p class="lead">接口按外部与内部分开。外部接口强调跨组织的数据、能量与活动交换；内部接口强调控制层级之间的实时性与安全独立性。</p>
+    <h4 style="margin-top:22px"><span class="h4n">3.4.1</span>外部接口需求</h4>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:46%">需求陈述</th><th style="width:8%">类型</th><th style="width:16%">接口对象</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">EI-01</td><td>系统应接受两路独立电网供电，并在任一路失电时自动切换，切换过程不中断安全负载。</td><td class="c"><span class="type a">A</span></td><td>外部电网</td><td>T 切换试验</td></tr>
+          <tr><td class="id">EI-02</td><td>系统应向电网调度提供需量、功率因数与孤岛信号，用于负荷预测与紧急削减。</td><td class="c"><span class="type d">D</span></td><td>电网调度</td><td>D 联调</td></tr>
+          <tr><td class="id">EI-03</td><td>系统应在舱体发车前向海关边检提交舱单、旅客名单与封志信息，并在查验后接收放行或拦截指令。</td><td class="c"><span class="type d">D</span></td><td>海关边检</td><td>D 跨境演练</td></tr>
+          <tr><td class="id">EI-04</td><td>系统应向既有交通方式提供到发时刻、延误与换乘指引，接口中断时本地仍可显示最近一次有效计划。</td><td class="c"><span class="type d">D</span></td><td>机场 / 铁路 / 港口</td><td>D 接口演示</td></tr>
+          <tr><td class="id">EI-05</td><td>系统应向科研机构提供预约、指标看板与原始数据导出接口，并按实验编号隔离数据。</td><td class="c"><span class="type d">D</span></td><td>科研机构</td><td>D 门户演示</td></tr>
+          <tr><td class="id">EI-06</td><td>系统应与消防、医疗与救援机构建立语音与数据通道，事故时自动推送位置、舱内人数与危险品信息。</td><td class="c"><span class="type d">D</span></td><td>应急机构</td><td>D 联合演练</td></tr>
+          <tr><td class="id">EI-07</td><td>系统应与通信运营商建立专线与卫星备份，主链路中断时关键遥测与控制指令仍可传输。</td><td class="c"><span class="type a">A</span></td><td>通信服务商</td><td>T 断链试验</td></tr>
+          <tr><td class="id">EI-08</td><td>系统应向保险与监管机构提供事故、停运与整改数据，数据口径与内部安全记录一致。</td><td class="c"><span class="type d">D</span></td><td>监管 / 保险</td><td>I 数据核对</td></tr>
+          <tr><td class="id">EI-09</td><td>系统应为后续轨道延伸段预留机械、电力与数据接口，预留接口在本期不改变既有安全边界。</td><td class="c"><span class="type i">I</span></td><td>延伸段项目</td><td>I 接口审查</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h4 style="margin-top:22px"><span class="h4n">3.4.2</span>内部接口需求</h4>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:50%">需求陈述</th><th style="width:8%">类型</th><th style="width:14%">接口对</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">II-01</td><td>调度中心与 SCADA 之间应交换模式、计划、设定值与全局状态，端到端时延不大于 100 ms。</td><td class="c"><span class="type a">A</span></td><td>OCC ↔ SCADA</td><td>T 时延测试</td></tr>
+          <tr><td class="id">II-02</td><td>SCADA 与泵组控制之间应交换启停、转速、阀位与故障码，采样周期不大于 100 ms。</td><td class="c"><span class="type a">A</span></td><td>SCADA ↔ 泵组</td><td>T 通信测试</td></tr>
+          <tr><td class="id">II-03</td><td>闸门控制应接收舱体位置与区段占用状态，只有在区段无舱且联锁允许时才能动作。</td><td class="c"><span class="type d">D</span></td><td>闸门 ↔ 舱体</td><td>T 联锁试验</td></tr>
+          <tr><td class="id">II-04</td><td>舱体控制与站点控制应交换停靠许可、门对准、登乘完成与发车许可，任一条件不满足不得发车。</td><td class="c"><span class="type d">D</span></td><td>舱体 ↔ 站点</td><td>D 发车联锁</td></tr>
+          <tr><td class="id">II-05</td><td>独立安全联锁应通过硬线或安全总线接收压力、位置、门状态与地震信号，不依赖普通 SCADA 网络。</td><td class="c"><span class="type a">A</span></td><td>SIS ↔ 现场</td><td>I + T</td></tr>
+          <tr><td class="id">II-06</td><td>系统应为安全负载与控制负载设置独立配电回路，安全回路失电时自动导向安全状态。</td><td class="c"><span class="type a">A</span></td><td>配电 ↔ 负载</td><td>T 失电试验</td></tr>
+          <tr><td class="id">II-07</td><td>全线设备应统一授时，安全事件时间戳偏差不大于 1 ms，运行事件不大于 10 ms。</td><td class="c"><span class="type a">A</span></td><td>时钟 ↔ 各系统</td><td>T 对时测试</td></tr>
+          <tr><td class="id">II-08</td><td>维护系统应能读取设备健康与工单状态，但不能直接改写安全设定值；改写需双人授权并留痕。</td><td class="c"><span class="type d">D</span></td><td>维护 ↔ 控制</td><td>I 权限审查</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.5</span>系统运行</h4>
+    <p class="lead">系统运行需求描述典型运行场景下“系统应达成什么结果”。场景覆盖正常、峰值、夜间货运、科研、降级、应急、检修与跨境受阻八类。</p>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:22%">运行场景</th><th style="width:50%">系统应达到的结果</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">OP-01</td><td>正常客运日</td><td>按时刻表完成发车、停靠与到达；压力、温度、门状态在限值内；到发准点率不低于 98%。</td><td>D 全日演练</td></tr>
+          <tr><td class="id">OP-02</td><td>早晚高峰</td><td>发车间隔缩短至 6 min，仍满足追踪间隔与站台周转；不因加密班次触发真空或闸门联锁。</td><td>T 峰值测试</td></tr>
+          <tr><td class="id">OP-03</td><td>夜间货运</td><td>在客运结束后 60 min 内完成模式转换；货运舱按计划装载、封志、发车与卸载。</td><td>D 夜间演练</td></tr>
+          <tr><td class="id">OP-04</td><td>科研窗口</td><td>指定管段在预约开始前达到实验指标；实验期间不安排运输；结束后 60 min 内恢复运输条件。</td><td>T 窗口演示</td></tr>
+          <tr><td class="id">OP-05</td><td>降级运行</td><td>单泵站或单区段失效时，系统以降速、减班或绕行维持部分服务，并向乘客发布延误。</td><td>D 降级演练</td></tr>
+          <tr><td class="id">OP-06</td><td>应急隔离</td><td>触发联锁后停止发车、隔离故障段、保持其余段安全；完成人员疏散与外部通报。</td><td>D 应急演练</td></tr>
+          <tr><td class="id">OP-07</td><td>计划检修</td><td>检修段隔离、挂牌、抽真空或破真空按规程执行；其余段维持运行或按计划停运。</td><td>D 检修演练</td></tr>
+          <tr><td class="id">OP-08</td><td>跨境口岸关闭</td><td>已发车舱体在最近安全站点停靠；未发车舱体取消或改期；旅客与货物得到安置与告知。</td><td>D 桌面推演</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.6</span>系统模式与状态</h4>
+    <p class="lead">模式是“系统当前为什么目的服务”，状态是“系统当前处于生存周期的哪个阶段”。两者分开管理，避免把“检修”与“降级”混为一谈。</p>
+    <div class="grid2">
+      <div>
+        <div class="tw">
+          <table class="tb table-lite">
+            <thead><tr><th style="width:16%">模式</th><th style="width:24%">用途</th><th>进入条件 / 关键指标</th></tr></thead>
+            <tbody>
+              <tr><td class="id">M1 客运</td><td>日间站间载客</td><td>真空、闸门、站台门、安检均正常；按时刻表发车</td></tr>
+              <tr><td class="id">M2 货运</td><td>夜间整舱货运</td><td>客运结束、装载完成、封志与舱单一致</td></tr>
+              <tr><td class="id">M3 科研</td><td>预约实验窗口</td><td>管段清空、实验指标达标、运输计划冻结</td></tr>
+              <tr><td class="id">M4 降级</td><td>单点失效下维持部分服务</td><td>降速、减班、绕行或单线运行；安全联锁完整</td></tr>
+              <tr><td class="id">M5 应急</td><td>泄漏、火灾、地震、入侵</td><td>停发、隔离、疏散、外部通报</td></tr>
+              <tr><td class="id">M6 检修</td><td>分区维护与抽真空</td><td>检修段隔离挂牌，其余段可运行</td></tr>
+              <tr><td class="id">M7 停运</td><td>长期封存或弃置准备</td><td>全线清空、断电、惰性保护、资产登记</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="tw">
+          <table class="tb table-lite">
+            <thead><tr><th style="width:16%">状态</th><th style="width:26%">生存周期阶段</th><th>主要活动</th></tr></thead>
+            <tbody>
+              <tr><td class="id">S0 定义</td><td>需求与架构</td><td>需求基线、架构权衡、安全分析</td></tr>
+              <tr><td class="id">S1 建设</td><td>土建与安装</td><td>管段、泵站、站点、控制系统安装</td></tr>
+              <tr><td class="id">S2 调试</td><td>单机与联调</td><td>泵组、闸门、舱体、SCADA 联调</td></tr>
+              <tr><td class="id">S3 试运</td><td>充真空与试运行</td><td>分段抽真空、低速试运、提量</td></tr>
+              <tr><td class="id">S4 运行</td><td>商业运行</td><td>客运、货运、科研窗口</td></tr>
+              <tr><td class="id">S5 降级</td><td>部分能力丧失</td><td>降速、减班、绕行、抢修</td></tr>
+              <tr><td class="id">S6 应急</td><td>事故处置</td><td>隔离、疏散、救援、通报</td></tr>
+              <tr><td class="id">S7 停运</td><td>检修或封存</td><td>隔离、维护、延寿或弃置准备</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="tw">
+      <table class="req2">
+        <thead><tr><th style="width:8%">编号</th><th style="width:60%">需求陈述</th><th style="width:8%">类型</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">MS-01</td><td>系统应在每次模式切换前确认管段清空、闸门关闭、压力达标与人员撤离，四项条件缺一不可。</td><td class="c"><span class="type d">D</span></td><td>T 联锁试验</td></tr>
+          <tr><td class="id">MS-02</td><td>客运与货运模式之间应保留不少于 60 min 的转换窗口，用于清舱、清洁、检查与计划切换。</td><td class="c"><span class="type a">A</span></td><td>D 转换演练</td></tr>
+          <tr><td class="id">MS-03</td><td>从正常运行进入应急模式应不需要人工逐级确认，联锁触发后自动执行，并由调度员确认结果。</td><td class="c"><span class="type d">D</span></td><td>T 触发试验</td></tr>
+          <tr><td class="id">MS-04</td><td>系统应阻止跳过中间状态直接进入商业运行；任何状态跳转都应记录操作者、时间与依据。</td><td class="c"><span class="type i">I</span></td><td>I 状态审计</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.7</span>物理特征</h4>
+    <p class="lead">物理特征只给出与需求验证相关的量级与约束，不锁定材料与构造形式。管段、舱体、泵站与站点的尺寸共同决定真空抽气时间、站台周转与运输能力。</p>
+    <div class="tw">
+      <table class="req2">
+        <thead><tr><th style="width:8%">编号</th><th style="width:44%">特征</th><th style="width:20%">量级 / 约束</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="id">PH-01</td><td>干线管段</td><td>内径 3.2 m；单段长度 ≤ 12 m</td><td>便于制造、运输与更换；内壁低放气、低粗糙度</td></tr>
+          <tr><td class="id">PH-02</td><td>运输舱体</td><td>外径 2.4 m；长度 30 m；额定 200 人或 60 t</td><td>舱体与管壁之间保留导向与悬浮间隙</td></tr>
+          <tr><td class="id">PH-03</td><td>泵站</td><td>8—20 座，示例 14 座；间距 300—500 km</td><td>按漏率、抽气时间与冗余配置确定</td></tr>
+          <tr><td class="id">PH-04</td><td>站点</td><td>站台长度 ≥ 220 m；登乘区独立抽真空</td><td>支持舱体停靠、上下客、货运装卸与检修</td></tr>
+          <tr><td class="id">PH-05</td><td>线路纵坡</td><td>不大于 3%；最小曲线半径按 1,500 km/h 校核</td><td>控制舱体加速度与导向负荷</td></tr>
+          <tr><td class="id">PH-06</td><td>设计寿命</td><td>30 年；可延寿至 40 年</td><td>主体结构、泵组与控制系统分别评估</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.8</span>环境条件</h4>
+    <div class="tw">
+      <table class="req2">
+        <thead><tr><th style="width:8%">编号</th><th style="width:56%">需求陈述</th><th style="width:8%">类型</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">EN-01</td><td>系统应在本底温度 −40—+50 °C、日温差 30 °C 的条件下保持管段气密性与控制精度。</td><td class="c"><span class="type a">A</span></td><td>A + T</td></tr>
+          <tr><td class="id">EN-02</td><td>系统应能承受不低于 VIII 度抗震设防的地震作用，震后自动停发并检查管段错位。</td><td class="c"><span class="type a">A</span></td><td>A 抗震分析</td></tr>
+          <tr><td class="id">EN-03</td><td>系统应能承受 12 级风、百年一遇洪水与 2,500 m 海拔的室外环境，不因环境变化误触发安全联锁。</td><td class="c"><span class="type a">A</span></td><td>A + T</td></tr>
+          <tr><td class="id">EN-04</td><td>系统应针对冻土融沉、盐雾、沙尘与沿海腐蚀环境设置监测与防护，腐蚀等级不低于 C4。</td><td class="c"><span class="type d">D</span></td><td>I 设计审查</td></tr>
+          <tr><td class="id">EN-05</td><td>系统应在外部电磁干扰、雷击与地磁扰动下保持控制链路可用，关键信号误码率不超过 10⁻⁹。</td><td class="c"><span class="type a">A</span></td><td>T EMC 测试</td></tr>
+          <tr><td class="id">EN-06</td><td>系统运行噪声应符合站点与沿线声环境要求，站界夜间噪声不超过 55 dB(A)。</td><td class="c"><span class="type i">I</span></td><td>T 噪声测试</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.9</span>安保需求</h4>
+    <p class="lead">这里的“安保”指防范未经授权的进入、破坏与网络入侵，区别于事故应急的“安全”。两者共享报警与处置流程，但威胁来源不同。</p>
+    <div class="tw">
+      <table class="req2">
+        <thead><tr><th style="width:8%">编号</th><th style="width:56%">需求陈述</th><th style="width:8%">类型</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">SEC-01</td><td>系统应对管段、泵站、闸门室与调度中心实施分区访问控制，按岗位授予最小权限并记录进出。</td><td class="c"><span class="type d">D</span></td><td>I 权限审查</td></tr>
+          <tr><td class="id">SEC-02</td><td>系统应通过光纤、视频与门磁对沿线关键区段实施入侵探测，报警定位误差不超过 500 m。</td><td class="c"><span class="type a">A</span></td><td>T 入侵试验</td></tr>
+          <tr><td class="id">SEC-03</td><td>系统应探测未经许可的无人机、挖掘与抛掷物，并在确认威胁后停止相关区段发车。</td><td class="c"><span class="type d">D</span></td><td>D 演练</td></tr>
+          <tr><td class="id">SEC-04</td><td>控制系统应按安全区与操作区隔离，远程维护必须经过双人授权、会话录屏与最小开放端口。</td><td class="c"><span class="type a">A</span></td><td>I 渗透测试</td></tr>
+          <tr><td class="id">SEC-05</td><td>系统应对控制指令与关键数据提供完整性校验和抗重放保护，拒绝未授权指令。</td><td class="c"><span class="type a">A</span></td><td>T 攻击模拟</td></tr>
+          <tr><td class="id">SEC-06</td><td>系统应对关键岗位人员实施背景审查与定期复训，离职或转岗后 24 h 内回收权限。</td><td class="c"><span class="type i">I</span></td><td>I 记录抽查</td></tr>
+          <tr><td class="id">SEC-07</td><td>系统应建立安保事件响应流程，能在 15 min 内完成初步研判并保留证据链。</td><td class="c"><span class="type d">D</span></td><td>D 桌面推演</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.10</span>信息管理需求</h4>
+    <div class="tw">
+      <table class="req2">
+        <thead><tr><th style="width:8%">编号</th><th style="width:56%">需求陈述</th><th style="width:8%">类型</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">IM-01</td><td>系统应建立统一的舱次、管段、设备与事件编码，使运行、安全、计量与查验数据可以按同一主键关联。</td><td class="c"><span class="type d">D</span></td><td>I 数据模型审查</td></tr>
+          <tr><td class="id">IM-02</td><td>运行数据应至少保存 10 年，安全事件与事故记录应至少保存 30 年，旅客个人信息按法定最短期限保存。</td><td class="c"><span class="type i">I</span></td><td>I 保留策略审查</td></tr>
+          <tr><td class="id">IM-03</td><td>系统应在跨境交换前完成数据分级，敏感数据按所在法域要求落地存储，不在本地留存完整副本。</td><td class="c"><span class="type i">I</span></td><td>I 合规审查</td></tr>
+          <tr><td class="id">IM-04</td><td>系统应向监管与事故调查提供只读审计接口，审计日志不可由运行人员修改。</td><td class="c"><span class="type d">D</span></td><td>T 审计测试</td></tr>
+          <tr><td class="id">IM-05</td><td>系统应对旅客名单、生物识别与支付信息实行最小化采集、加密存储与访问审计。</td><td class="c"><span class="type i">I</span></td><td>I 隐私审查</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.11</span>政策与法规需求</h4>
+    <div class="tw">
+      <table class="req2">
+        <thead><tr><th style="width:8%">编号</th><th style="width:56%">需求陈述</th><th style="width:8%">类型</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">POL-01</td><td>系统应在开工前取得资源国、过境国与消费国的建设、运行、环保与土地许可，许可条件纳入需求基线。</td><td class="c"><span class="type i">I</span></td><td>I 许可核查</td></tr>
+          <tr><td class="id">POL-02</td><td>系统应遵守各法域的海关、边检、卫生检疫与危险品运输规定，不能以运行效率为由绕过查验。</td><td class="c"><span class="type i">I</span></td><td>I 合规审计</td></tr>
+          <tr><td class="id">POL-03</td><td>系统应在发车前完成旅客身份核验与名单报送，拦截名单与查验指令未闭环不得发车。</td><td class="c"><span class="type i">I</span></td><td>T 拦截试验</td></tr>
+          <tr><td class="id">POL-04</td><td>系统应遵守出口管制与关键设备进口许可，控制软件与加密模块的来源可追溯。</td><td class="c"><span class="type i">I</span></td><td>I 供应链审查</td></tr>
+          <tr><td class="id">POL-05</td><td>系统应在事故后按各法域时限完成报告、公开与整改，不能以商业保密为由延迟法定通报。</td><td class="c"><span class="type i">I</span></td><td>D 通报演练</td></tr>
+          <tr><td class="id">POL-06</td><td>系统应与沿线社区建立补偿、就业与投诉处理机制，投诉处理状态可查询。</td><td class="c"><span class="type d">D</span></td><td>D 社区沟通</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.12</span>系统生存周期支持需求</h4>
+    <div class="tw">
+      <table class="req2">
+        <thead><tr><th style="width:8%">编号</th><th style="width:56%">需求陈述</th><th style="width:8%">类型</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">LCS-01</td><td>系统应提供分区维护能力，任一泵站或闸门检修时其余管段仍可按降级模式运行。</td><td class="c"><span class="type d">D</span></td><td>D 检修演练</td></tr>
+          <tr><td class="id">LCS-02</td><td>关键泵组、闸门与传感器应按 N+1 配置，关键备件应支持 30 天自持维修。</td><td class="c"><span class="type a">A</span></td><td>I 备件清单</td></tr>
+          <tr><td class="id">LCS-03</td><td>系统应提供调度、运维、站务与应急四类培训，岗位人员在上岗前完成模拟器考核。</td><td class="c"><span class="type d">D</span></td><td>D 培训考核</td></tr>
+          <tr><td class="id">LCS-04</td><td>系统应维护与实物一致的配置文件、接口文档与竣工模型，变更后 5 个工作日内更新。</td><td class="c"><span class="type d">D</span></td><td>I 文档审查</td></tr>
+          <tr><td class="id">LCS-05</td><td>系统应建立数字孪生用于运行推演、事故复盘与培训，数字孪生不直接参与实时控制。</td><td class="c"><span class="type d">D</span></td><td>D 模型演示</td></tr>
+          <tr><td class="id">LCS-06</td><td>系统应识别关键设备的停产与升级风险，提前 5 年给出替代或延寿方案。</td><td class="c"><span class="type d">D</span></td><td>A 设备停产评估</td></tr>
+          <tr><td class="id">LCS-07</td><td>系统弃置时应完成管段清空、危险物回收、土地恢复与资产登记，不遗留不可监管的真空容腔。</td><td class="c"><span class="type i">I</span></td><td>I 弃置方案审查</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.13</span>包装、处理、装载、运输需求</h4>
+    <div class="tw">
+      <table class="req2">
+        <thead><tr><th style="width:8%">编号</th><th style="width:56%">需求陈述</th><th style="width:8%">类型</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td class="id">PKG-01</td><td>管段、泵组与舱体部件应能在规定的公路、铁路或海运限界内运输，超限件应提前取得许可。</td><td class="c"><span class="type i">I</span></td><td>I 限界核查</td></tr>
+          <tr><td class="id">PKG-02</td><td>精密设备应采用防潮、防振与防尘包装，运输过程记录冲击与倾斜，超限到货不得直接安装。</td><td class="c"><span class="type d">D</span></td><td>I 到货检查</td></tr>
+          <tr><td class="id">PKG-03</td><td>舱体与压力部件在运输、吊装与存放期间应保持保护气氛与封口，防止内壁污染。</td><td class="c"><span class="type d">D</span></td><td>I 过程记录</td></tr>
+          <tr><td class="id">PKG-04</td><td>危险品、蓄电池与高压设备应按运输法规分类包装，随附安全数据表与应急联系卡。</td><td class="c"><span class="type i">I</span></td><td>I 合规抽查</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">4</span>验证</h4>
+    <p class="lead">验证与第 3 章逐组对应。A（分析）用于无法直接试验的指标；I（检查）用于文档、配置与物理尺寸；D（演示）用于场景与界面；T（测试）用于可测量的性能与联锁。</p>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:16%">需求组</th><th style="width:12%">主要方法</th><th style="width:30%">验证环境</th><th>通过准则</th></tr></thead>
+        <tbody>
+          <tr><td>功能 FR</td><td>T / D</td><td>全线试运、站内演练</td><td>所有功能路径可复现，异常路径导向安全状态</td></tr>
+          <tr><td>可用性 US</td><td>D</td><td>乘客样本、调度模拟器</td><td>首次使用者完成任务；调度员 30 s 内定位异常</td></tr>
+          <tr><td>性能 PR</td><td>T / A</td><td>试运线、数字仿真</td><td>达到指标且留有安全余量；冲突项重新校核</td></tr>
+          <tr><td>外部接口 EI</td><td>D / T</td><td>联调平台、跨境演练</td><td>数据完整、时延达标、断链可降级</td></tr>
+          <tr><td>内部接口 II</td><td>T / I</td><td>控制实验室、现场联调</td><td>时延、采样、联锁与权限符合规定</td></tr>
+          <tr><td>运行场景 OP</td><td>D</td><td>全场景桌面与实操</td><td>场景目标达成，退出条件明确</td></tr>
+          <tr><td>模式状态 MS</td><td>T / I</td><td>状态机测试</td><td>非法跳转被阻止，切换条件四项齐全</td></tr>
+          <tr><td>物理 PH</td><td>I / T</td><td>制造与安装现场</td><td>尺寸、坡度、寿命假设与设计一致</td></tr>
+          <tr><td>环境 EN</td><td>A / T</td><td>环境实验室、沿线监测</td><td>极值条件下不误触发，精度保持</td></tr>
+          <tr><td>安保 SEC</td><td>I / T</td><td>渗透测试、入侵演练</td><td>未授权访问被拒，报警可定位</td></tr>
+          <tr><td>信息 IM</td><td>I / T</td><td>数据审计</td><td>主键可关联，保留期与权限符合策略</td></tr>
+          <tr><td>政策 POL</td><td>I</td><td>合规审计</td><td>许可与查验记录齐全，无法定缺失</td></tr>
+          <tr><td>支持 LCS</td><td>D / I</td><td>维护与培训演练</td><td>分区检修可行，备件与文档可用</td></tr>
+          <tr><td>包装 PKG</td><td>I</td><td>到货与运输记录</td><td>无超限损伤，保护气氛保持</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">5.1</span>假设与依赖</h4>
+    <div class="tw">
+      <table class="tb table-lite">
+        <thead><tr><th style="width:10%">编号</th><th>假设 / 依赖</th><th style="width:18%">影响</th></tr></thead>
+        <tbody>
+          <tr><td class="id">A-01</td><td>示例干线按 5,000 km、两端站加一处中途站配置，实际线路待可研确定。</td><td>性能与投资估算</td></tr>
+          <tr><td class="id">A-02</td><td>巡航 1,200 km/h、峰值 1,500 km/h 为需求目标，不代表已具备工程实现。</td><td>牵引、导向与制动</td></tr>
+          <tr><td class="id">A-03</td><td>单舱 200 人、60 t 货运为量级假设，用于计算站台周转与发车间隔。</td><td>容量与站台尺寸</td></tr>
+          <tr><td class="id">A-04</td><td>外部电网可提供 400 MW 峰值容量与双回路接入。</td><td>泵组与牵引供电</td></tr>
+          <tr><td class="id">A-05</td><td>三个及以上法域可就用地的许可、关税、数据与应急责任达成协议。</td><td>项目成立前提</td></tr>
+          <tr><td class="id">A-06</td><td>沿线地震、冻土、盐雾等参数按初勘资料取值，详细设计阶段复核。</td><td>结构与维护</td></tr>
+          <tr><td class="id">A-07</td><td>系统寿命 30 年，泵组与控制设备按 15 年更新一次。</td><td>全寿命成本</td></tr>
+          <tr><td class="id">A-08</td><td>城市接驳、站内商业与轨道延伸段不在本期范围，由地方或其他项目承担。</td><td>系统边界</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">5.2</span>缩写与缩略语</h4>
+    <div class="tw">
+      <table class="tb table-lite">
+        <thead><tr><th style="width:18%">缩写</th><th>含义</th><th style="width:18%">缩写</th><th>含义</th></tr></thead>
+        <tbody>
+          <tr><td>VPTS</td><td>真空管道运输系统</td><td>SyRS</td><td>系统需求规格说明书</td></tr>
+          <tr><td>OCC</td><td>跨洲调度中心</td><td>SCADA</td><td>数据采集与监控系统</td></tr>
+          <tr><td>SIS</td><td>安全联锁系统</td><td>SIL</td><td>安全完整性等级</td></tr>
+          <tr><td>ESD</td><td>紧急停车</td><td>HMI</td><td>人机界面</td></tr>
+          <tr><td>MTBF</td><td>平均无故障时间</td><td>FAT / SAT</td><td>出厂 / 现场验收测试</td></tr>
+          <tr><td>CAPEX</td><td>资本性支出</td><td>OPEX</td><td>运营性支出</td></tr>
+          <tr><td>FID</td><td>最终投资决策</td><td>PDR</td><td>初步设计评审</td></tr>
+          <tr><td>RainingDay</td><td>异常运行场景</td><td>EMC</td><td>电磁兼容</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<!-- ================= 03 ================= -->
+<section class="ch" id="ch3" data-sec="ch3">
+  <div class="sec-head">
+    <div class="sec-no">03</div>
+    <div class="sec-title">
+      <h2>初始系统架构</h2>
+      <div class="sec-en">Initial System Architecture · Functional / Logical / Physical</div>
+      <p class="sec-lead">从功能、逻辑与物理三个视角描述系统如何组成。功能架构回答“必须完成哪些转换”，逻辑架构回答“哪些控制与信息单元承担这些转换”，物理架构回答“这些单元落在哪些实体上”。</p>
+      <div class="sec-meta"><span>方法 功能分解 + 五类交互 + 权衡分析</span><span>输出 三视图 + 接口 + 备选方案</span></div>
+    </div>
+  </div>
+
+  <div class="paper">
+    <div class="paper-head"><span>VPTS / ARCHITECTURE</span><span>03 · INITIAL ARCHITECTURE</span></div>
+
+    <h4><span class="h4n">3.1</span>架构定义过程</h4>
+    <p class="lead">架构定义从需求基线出发，先按功能视角建立功能分解结构，再按接口与交互视角划分逻辑单元，最后把逻辑单元分配到管段、泵站、闸门、舱体、站点与调度中心等物理载体。</p>
+    <p>功能分解同时使用三条线索：工作原理（低压力环境降低阻力、电磁力实现悬浮与牵引）、运行概念（日间客运、夜间货运、科研窗口）、完备性法则（执行、传动、动力、控制与工作介质必须齐全）。逻辑划分使用五类交互要素检查输入、转换与输出是否遗漏。物理分配则通过两套备选架构的权衡结果确定。</p>
+
+    <h4><span class="h4n">3.2</span>功能架构</h4>
+    <p class="lead">功能架构是一组功能及其子功能，描述系统为完成使命所执行的输入流到输出流转换。下表把第 2 章的能力映射到 15 项功能，并标出每项功能的输入与输出。</p>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">功能</th><th style="width:24%">功能名称</th><th style="width:30%">输入</th><th>输出</th></tr></thead>
+        <tbody>
+          <tr><td class="id">F-01</td><td>加速、巡航、减速与停靠</td><td>发车许可、目标速度、位置</td><td>舱体运动、到站停车</td></tr>
+          <tr><td class="id">F-02</td><td>追踪与安全间隔保持</td><td>前车位置、速度、占用状态</td><td>追踪许可、减速指令</td></tr>
+          <tr><td class="id">F-03</td><td>真空维持与压力监测</td><td>压力、漏率、泵组状态</td><td>抽气指令、压力记录</td></tr>
+          <tr><td class="id">F-04</td><td>故障段隔离</td><td>越限信号、区段占用</td><td>闸门关闭、停发指令</td></tr>
+          <tr><td class="id">F-05</td><td>客运组织</td><td>旅客、行李、班次</td><td>登乘完成、舱位占用</td></tr>
+          <tr><td class="id">F-06</td><td>货运组织</td><td>货物、托盘、舱单</td><td>装载固定、封志、计重</td></tr>
+          <tr><td class="id">F-07</td><td>科研环境保障</td><td>预约窗口、实验指标</td><td>真空度、振动、屏蔽状态</td></tr>
+          <tr><td class="id">F-08</td><td>模式调度与切换</td><td>计划、资源、联锁状态</td><td>模式指令、切换确认</td></tr>
+          <tr><td class="id">F-09</td><td>状态广播</td><td>运行状态、延误、事故</td><td>对外信息、换乘指引</td></tr>
+          <tr><td class="id">F-10</td><td>事故通报</td><td>事故等级、位置、人数</td><td>通报包、处置状态</td></tr>
+          <tr><td class="id">F-11</td><td>站内周转</td><td>到站舱体、旅客、货物</td><td>开门、上下客货、再发车</td></tr>
+          <tr><td class="id">F-12</td><td>分区检修</td><td>工单、隔离申请</td><td>隔离、挂牌、恢复</td></tr>
+          <tr><td class="id">F-13</td><td>能源保障</td><td>电网供电、需量指令</td><td>牵引与泵组用电、备电切换</td></tr>
+          <tr><td class="id">F-14</td><td>跨境查验衔接</td><td>舱单、名单、封志</td><td>放行、拦截、二次检查</td></tr>
+          <tr><td class="id">F-15</td><td>运行数据记录</td><td>运行、安全、计量数据</td><td>可追溯记录、审计接口</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.3</span>五类交互要素</h4>
+    <p class="lead">五类交互要素用于检查功能分解的完整性：信号、数据、物质、能量、活动。任何一项功能，至少要在输入、转换、输出三个环节中找到它处理的是哪几类要素。</p>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:12%">要素</th><th style="width:28%">在本系统中的典型输入</th><th style="width:28%">转换</th><th>典型输出</th></tr></thead>
+        <tbody>
+          <tr><td>信号</td><td>压力、温度、位置、速度、门磁、地震波</td><td>滤波、阈值判断、2oo3 表决</td><td>报警、联锁触发、指示灯</td></tr>
+          <tr><td>数据</td><td>时刻表、舱单、旅客名单、实验预约</td><td>校验、融合、寻址、记录</td><td>发车计划、放行指令、审计日志</td></tr>
+          <tr><td>物质</td><td>舱体、旅客、货物、备件、空气</td><td>容纳、固定、隔离、抽除</td><td>位移、装卸、封存、真空环境</td></tr>
+          <tr><td>能量</td><td>电能、磁悬浮力、制动能、压缩热</td><td>变流、牵引、制动、散热</td><td>动能、再生电能、废热</td></tr>
+          <tr><td>活动</td><td>值机、登乘、查验、检修、救援</td><td>流程编排、权限校验、协同</td><td>服务完成、工单关闭、人员撤离</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">完备性检查：管段与舱体构成“工作介质与执行空间”，泵组与牵引变流构成“动力与传动”，闸门与制动构成“执行”，OCC、SCADA 与 SIS 构成“控制”，五类交互构成“联系”。缺一项，系统就不能稳定实现 F-01 与 F-03。</p>
+
+    <h4><span class="h4n">3.4</span>逻辑架构</h4>
+    <p class="lead">逻辑架构把功能分配给可独立定义接口的逻辑单元。它不规定设备型号，只规定每个单元承担什么职责、与谁交换什么。</p>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:10%">逻辑单元</th><th style="width:22%">职责</th><th style="width:28%">主要输入</th><th>主要输出</th></tr></thead>
+        <tbody>
+          <tr><td class="id">LE-01</td><td>跨洲调度中心 OCC</td><td>计划、气象、海关、区域状态</td><td>模式、班次、隔离与恢复指令</td></tr>
+          <tr><td class="id">LE-02</td><td>SCADA 监控</td><td>全线遥测、设备状态、报警</td><td>设定值、启停指令、态势画面</td></tr>
+          <tr><td class="id">LE-03</td><td>安全联锁 SIS</td><td>压力、位置、门磁、地震</td><td>停发、隔离、紧急停车</td></tr>
+          <tr><td class="id">LE-04</td><td>真空控制</td><td>压力、漏率、泵组健康</td><td>泵组转速、阀位、抽气计划</td></tr>
+          <tr><td class="id">LE-05</td><td>闸门控制</td><td>区段占用、压差、联锁许可</td><td>开闭指令、位置反馈</td></tr>
+          <tr><td class="id">LE-06</td><td>舱体控制</td><td>速度、位置、悬浮间隙、制动</td><td>牵引力、悬浮力、制动力</td></tr>
+          <tr><td class="id">LE-07</td><td>站点控制</td><td>到发计划、旅客、货物、门状态</td><td>停靠许可、登乘完成、发车许可</td></tr>
+          <tr><td class="id">LE-08</td><td>能源管理</td><td>电网容量、需量、备电状态</td><td>负荷分配、备电切换、削减指令</td></tr>
+          <tr><td class="id">LE-09</td><td>维护管理</td><td>工单、备件、健康度</td><td>检修计划、隔离申请、恢复确认</td></tr>
+          <tr><td class="id">LE-10</td><td>对外网关</td><td>海关、换乘、科研、监管请求</td><td>标准化消息、放行/拦截、公开信息</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.5</span>初步物理架构</h4>
+    <p class="lead">核心要素仍是管段、泵组、闸门、舱体与调度中心五类；站点作为系统与乘客、货物、海关之间的边界单元，供电、传感与通信作为支撑要素列入物理架构。</p>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:10%">物理元素</th><th style="width:24%">构成</th><th style="width:14%">数量 / 量级</th><th>承担的邏輯单元</th></tr></thead>
+        <tbody>
+          <tr><td class="id">PE-01</td><td>干线管段</td><td>5,000 km；内径 3.2 m</td><td>容纳舱体、维持真空、承载传感与通信</td></tr>
+          <tr><td class="id">PE-02</td><td>泵站</td><td>14 座（8—20）</td><td>LE-04 真空控制、LE-08 能源管理</td></tr>
+          <tr><td class="id">PE-03</td><td>隔离闸门</td><td>每站 2 道，区间可增设</td><td>LE-05 闸门控制、LE-03 安全联锁</td></tr>
+          <tr><td class="id">PE-04</td><td>运输舱体</td><td>客运 / 货运两型；200 人或 60 t</td><td>LE-06 舱体控制、F-01、F-11</td></tr>
+          <tr><td class="id">PE-05</td><td>站点</td><td>两端站 + 中途站；站台 ≥220 m</td><td>LE-07 站点控制、F-05、F-06、F-14</td></tr>
+          <tr><td class="id">PE-06</td><td>调度中心</td><td>1 主 + 1 备</td><td>LE-01 OCC、LE-02 SCADA</td></tr>
+          <tr><td class="id">PE-07</td><td>传感与通信网络</td><td>沿线光纤 + 卫星备份</td><td>信号采集、状态回传、时间同步</td></tr>
+          <tr><td class="id">PE-08</td><td>供电与备电</td><td>双回路 + UPS + 柴发</td><td>LE-08、安全负载与应急照明</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.6</span>关键接口识别</h4>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:20%">接口</th><th style="width:22%">交换内容</th><th style="width:16%">时延 / 频率</th><th>失效后果</th></tr></thead>
+        <tbody>
+          <tr><td>OCC ↔ SCADA</td><td>模式、计划、设定值、全局态势</td><td>≤100 ms</td><td>失去全局调度，降为区域自治</td></tr>
+          <tr><td>SCADA ↔ 泵组</td><td>启停、转速、阀位、故障码</td><td>100 ms 采样</td><td>真空下降，触发隔离</td></tr>
+          <tr><td>SIS ↔ 现场</td><td>压力、位置、门磁、地震</td><td>≤50 ms，硬线</td><td>安全功能失效，必须停运</td></tr>
+          <tr><td>舱体 ↔ 站点</td><td>停靠许可、门对准、登乘完成</td><td>≤200 ms</td><td>不能发车或误发车</td></tr>
+          <tr><td>闸门 ↔ 舱体</td><td>区段占用、开闭许可</td><td>≤100 ms</td><td>闸门与舱体冲突</td></tr>
+          <tr><td>系统 ↔ 海关</td><td>舱单、名单、封志、放行</td><td>发车前 30 min</td><td>舱体滞留，班次取消</td></tr>
+          <tr><td>系统 ↔ 电网</td><td>需量、功率、孤岛信号</td><td>1 s</td><td>需量越限，被迫降载</td></tr>
+          <tr><td>系统 ↔ 应急机构</td><td>位置、人数、危险品、通道</td><td>事故后 60 s</td><td>救援延迟</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">3.7</span>两套备选架构与权衡</h4>
+    <p class="lead">备选方案只在控制与组织层面分开，物理层（管段、泵站、舱体、站点）保持一致，便于比较控制架构差异。</p>
+    <div class="grid2">
+      <div class="card"><div class="cn">OPTION A</div><b>全线集中控制</b><span>一个 OCC 统一掌握全线计划、真空、闸门与舱体；区域只保留执行与监视。优点是口径统一、时延低；缺点是中心失效影响面大，跨境协调压力集中。</span></div>
+      <div class="card"><div class="cn">OPTION B</div><b>分区自治 + 跨洲协调</b><span>按法域或地理区段设三个区域控制中心，各自掌握本区真空、闸门与舱体；OCC 只做跨区计划、冲突消解与对外通报。优点是韧性高；缺点是一致性与接口复杂度上升。</span></div>
+    </div>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:20%">权衡准则</th><th style="width:8%">权重</th><th style="width:8%">A 分</th><th style="width:8%">B 分</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>安全与联锁独立性</td><td class="c">25%</td><td class="c">4</td><td class="c">4</td><td>两案都设独立 SIS，安全层不并入 SCADA</td></tr>
+          <tr><td>可用性与韧性</td><td class="c">20%</td><td class="c">3</td><td class="c">5</td><td>B 的区域中心可独立降级运行</td></tr>
+          <tr><td>控制时延</td><td class="c">15%</td><td class="c">5</td><td class="c">3</td><td>A 少一层协调，指令路径短</td></tr>
+          <tr><td>建设与运行成本</td><td class="c">15%</td><td class="c">4</td><td class="c">3</td><td>A 只需一套中心，B 需三套并增加接口</td></tr>
+          <tr><td>网络暴露面</td><td class="c">15%</td><td class="c">3</td><td class="c">4</td><td>B 可分区隔离，单点被攻破影响小</td></tr>
+          <tr><td>扩展与多法域适应</td><td class="c">10%</td><td class="c">3</td><td class="c">4</td><td>B 更易接入新国家与延伸段</td></tr>
+          <tr><td><strong>加权得分</strong></td><td class="c">100%</td><td class="c"><strong>3.70</strong></td><td class="c"><strong>3.90</strong></td><td>5 分制；权重为作业推演</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>推荐：</strong>以 B 为基线，OCC 保留跨区计划与冲突消解权，区域中心拥有本区降级与隔离权；独立 SIS 全线统一标准、分段独立执行。这样既保留多法域适应性，又避免把安全功能分散到不同厂商的实现中。A 可作为单法域、单运营商场景的简化方案。</p>
+
+    <h4><span class="h4n">3.8</span>完备性检查</h4>
+    <div class="tw">
+      <table class="tb table-lite">
+        <thead><tr><th style="width:22%">完备性要素</th><th style="width:34%">本系统的对应物</th><th>检查结论</th></tr></thead>
+        <tbody>
+          <tr><td>执行装置</td><td>牵引/制动、闸门、泵组、站台门</td><td>具备，且关键执行有冗余</td></tr>
+          <tr><td>传动装置</td><td>直线电机、悬浮导向、变流与配电</td><td>具备，传动链需与制动链分开</td></tr>
+          <tr><td>动力装置</td><td>双回路电网、UPS、备用发电</td><td>具备，但峰值容量是外部依赖</td></tr>
+          <tr><td>控制装置</td><td>OCC、SCADA、区域控制、SIS</td><td>具备，安全层独立</td></tr>
+          <tr><td>工作介质与空间</td><td>管段容腔、低压力空气、舱体</td><td>具备，真空维持是核心约束</td></tr>
+          <tr><td>必要联系</td><td>信号、数据、物质、能量、活动接口</td><td>已识别，跨境数据与应急接口仍需细化</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 04 ================= -->
+<section class="ch" id="ch4" data-sec="ch4">
+  <div class="sec-head">
+    <div class="sec-no">04</div>
+    <div class="sec-title">
+      <h2>系统控制结构</h2>
+      <div class="sec-en">System Control Architecture · Mermaid Block Diagram</div>
+      <p class="sec-lead">控制结构说明“谁下指令、谁执行、谁感知、谁在异常时接管”。框图采用与参考图一致的分层布局：上层控制器、下层执行器、受控过程、底部传感器，以及贯穿全图的反馈与联锁。</p>
+      <div class="sec-meta"><span>图形 Mermaid 10 · flowchart TB</span><span>层级 L0—L4</span><span>安全层 独立 SIS</span></div>
+    </div>
+  </div>
+
+  <div class="paper">
+    <div class="paper-head"><span>VPTS / CONTROL</span><span>04 · CONTROL ARCHITECTURE</span></div>
+
+    <h4><span class="h4n">4.1</span>系统控制框图</h4>
+    <p class="lead">框图只表达控制器、执行器、受控过程与传感器之间的功能交互，不包含具体硬件型号。实线为控制指令，虚线为状态反馈与安全联锁，外部接口以虚线框表示。</p>
+    <div class="diagram">
+      <div class="cap">图 4-1 真空管道洲际运输系统控制框图 · 窄屏可左右滑动查看完整框图</div>
+      <pre class="mermaid">
+flowchart TB
+  subgraph L0["L0 跨洲调度层"]
+    direction LR
+    OCC["OCC 跨洲调度"]
+    SIS["SIS 安全联锁"]
+    SCADA["SCADA 监控"]
+  end
+
+  subgraph L1["L1 区段控制层"]
+    direction LR
+    VAC["真空泵组控制"]
+    GATE["隔离闸门控制"]
+    PODC["舱体运行控制"]
+    STNC["站点单元控制"]
+  end
+
+  subgraph L2["L2 受控过程"]
+    direction LR
+    TUBE["管段与真空容腔"]
+    POD["运输舱体"]
+    STN["站点停靠区"]
+  end
+
+  SENS["传感器组<br/>压力 / 位置 / 门磁 / 地震"]
+  EXT["外部接口<br/>电网 / 海关 / 科研 / 应急"]
+
+  OCC -->|"计划 / 模式"| SCADA
+  OCC -->|"停发"| SIS
+  SCADA -->|"设定值"| VAC
+  SCADA -->|"开闭许可"| GATE
+  SCADA -->|"速度 / 间隔"| PODC
+  SCADA -->|"到发计划"| STNC
+  SIS -.->|"联锁"| VAC
+  SIS -.->|"联锁"| GATE
+  SIS -.->|"紧急制动"| PODC
+  SIS -.->|"禁发"| STNC
+  VAC -->|"抽气"| TUBE
+  GATE -->|"分段开闭"| TUBE
+  PODC -->|"牵引 / 制动"| POD
+  STNC -->|"停靠 / 登乘"| STN
+  TUBE -->|"低压力"| POD
+  POD -->|"到发"| STN
+  SENS -.->|"反馈"| SCADA
+  SENS -.->|"硬线信号"| SIS
+  EXT -.->|"电能 / 查验 / 救援"| STN
+
+  classDef ext fill:#F1F3F5,stroke:#8A98A4,color:#23313B,stroke-dasharray:4 3
+  classDef ctrl fill:#F7E6C8,stroke:#B38234,color:#3B2A12
+  classDef proc fill:#E3F0EC,stroke:#3E7C76,color:#15332F
+  classDef sens fill:#EFE8DA,stroke:#9B7B4B,color:#3B3020
+  class OCC,SIS,SCADA ctrl
+  class VAC,GATE,PODC,STNC,TUBE,POD,STN proc
+  class SENS sens
+  class EXT ext
+</pre>
+      <div class="mermaid-fallback">框图渲染需要联网加载 Mermaid CDN。当前未渲染时，可查看本页源码中的 flowchart 定义；或刷新页面后重试。</div>
+    </div>
+
+    <h4><span class="h4n">4.2</span>框图逻辑说明</h4>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:12%">层级</th><th style="width:24%">构成</th><th style="width:28%">职责</th><th>失效后的降级</th></tr></thead>
+        <tbody>
+          <tr><td class="id">L0</td><td>OCC、SIS、SCADA</td><td>跨区计划、全局态势、安全联锁仲裁</td><td>区域中心接管本区计划；SIS 保持独立</td></tr>
+          <tr><td class="id">L1</td><td>真空、闸门、舱体、站点控制</td><td>把设定值转成设备动作，执行联锁</td><td>本地手动 + 硬线联锁</td></tr>
+          <tr><td class="id">L2</td><td>管段、舱体、站点</td><td>被控制的过程：压力、运动、停靠</td><td>导向安全状态：停发、隔离、制动</td></tr>
+          <tr><td class="id">L3</td><td>压力、位置、门磁、地震、烟感</td><td>提供测量与灾害信号</td><td>信号失效时按“故障安全”处理</td></tr>
+          <tr><td class="id">EXT</td><td>电网、海关、科研、应急</td><td>能量、合规、实验与救援接口</td><td>断链时按预案降级，不阻断安全回路</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">4.3</span>SCADA 调度控制逻辑</h4>
+    <p class="lead">SCADA 不直接承担安全判断，它负责把 OCC 的计划转成可执行的设定值，并把现场状态压缩成调度员能读懂的态势。</p>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:10%">步骤</th><th style="width:26%">动作</th><th style="width:30%">输入</th><th>输出 / 判据</th></tr></thead>
+        <tbody>
+          <tr><td class="id">SC-1</td><td>接收班次与模式</td><td>OCC 日计划、货运计划、科研窗口</td><td>班次队列、区段占用表</td></tr>
+          <tr><td class="id">SC-2</td><td>分配管段与站点资源</td><td>区段空闲、站台可用、闸门状态</td><td>发车序列、停靠位、转换窗口</td></tr>
+          <tr><td class="id">SC-3</td><td>下装设定值</td><td>速度曲线、压力目标、阀门开度</td><td>L1 控制器设定值</td></tr>
+          <tr><td class="id">SC-4</td><td>监视与报警</td><td>遥测、设备健康、越限</td><td>报警分级、操作建议</td></tr>
+          <tr><td class="id">SC-5</td><td>记录与回放</td><td>状态、指令、操作者</td><td>事件序列、事故追溯包</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>调度周期按 100 ms 刷新，计划层按分钟级滚动。任何设定值变更都要经过“范围检查—联锁预检—双人确认”三步；安全联锁触发时，SCADA 只负责显示，不参与解除。</p>
+
+    <h4><span class="h4n">4.4</span>真空联锁保护逻辑</h4>
+    <p class="lead">真空是系统最特殊的状态量：它既是运行条件，也是安全边界。压力升高意味着空气进入，高速舱体会遭遇气动冲击，因此联锁必须比常规过程控制更快、更独立。</p>
+    <div class="kv">
+      <div>检测</div><div>每段设置 3 组独立压力/漏率传感器，采用 2oo3 表决；任一传感器故障不影响其余两组的判断。</div>
+      <div>预警</div><div>压力达到 30 Pa 或漏率超过 0.2 Pa/h，系统降低发车密度、加强抽气，并提示调度员准备隔离。</div>
+      <div>触发</div><div>压力达到 50 Pa，或 3 s 内压力上升超过 5 Pa，SIS 直接停发、关闭相邻闸门、向在途舱体发紧急制动。</div>
+      <div>隔离</div><div>锁定故障段，禁止新舱进入；保持其余段真空，不向故障段补气，避免把污染物和压力波带到相邻段。</div>
+      <div>恢复</div><div>人员进入前先确认段内压力与氧含量；修复后分段抽真空，达到 10 Pa 并保压 30 min 才解除隔离。</div>
+    </div>
+
+    <h4><span class="h4n">4.5</span>舱体运行闭环控制</h4>
+    <p class="lead">舱体控制分为内环与外环。内环稳定悬浮间隙与牵引力，外环跟踪速度曲线与追踪间隔。安全层独立监测超速、越位与悬浮失效，不依赖外环。</p>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:16%">回路</th><th style="width:20%">被控量</th><th style="width:22%">反馈</th><th style="width:18%">周期</th><th>超限动作</th></tr></thead>
+        <tbody>
+          <tr><td>悬浮内环</td><td>悬浮间隙</td><td>间隙传感器、电流</td><td>1 kHz</td><td>间隙越限 → 降速、切备份</td></tr>
+          <tr><td>牵引内环</td><td>牵引力 / 电流</td><td>电机电流、温度</td><td>1 kHz</td><td>过流 → 限流、报警</td></tr>
+          <tr><td>速度外环</td><td>速度</td><td>位置、速度、轮速冗余</td><td>100 ms</td><td>超速 5% → 常用制动；超速 10% → 紧急制动</td></tr>
+          <tr><td>间隔外环</td><td>与前车距离</td><td>前车位置、区段占用</td><td>100 ms</td><td>低于最小间隔 → 减速、停发</td></tr>
+          <tr><td>制动回路</td><td>减速度</td><td>加速度计、制动压力</td><td>1 kHz</td><td>减速度不足 → 备用制动、磁轨制动</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">4.6</span>三种运行模式切换逻辑</h4>
+    <p class="lead">日间客运、夜间货运、科研窗口是三种占用模式。切换不是改一个软件开关，而是完成清舱、压力调整、站台改造与联锁复位四件事。</p>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:20%">切换</th><th style="width:28%">前置条件</th><th style="width:26%">执行动作</th><th>完成判据</th></tr></thead>
+        <tbody>
+          <tr><td>M1 客运 → M2 货运</td><td>末班到站、旅客清空、站台门关闭</td><td>清舱、清洁、装载设备就位、货运舱调度</td><td>60 min 内完成首舱装载与封志</td></tr>
+          <tr><td>M2 货运 → M1 客运</td><td>货运舱全部卸载、危险品清场</td><td>清舱、座舱复位、安检设备自检</td><td>首班旅客可登乘，站台门联锁通过</td></tr>
+          <tr><td>M1/M2 → M3 科研</td><td>指定管段清空、实验预约确认</td><td>冻结运输计划、调节压力、开启屏蔽与减振</td><td>压力 ≤1 Pa，振动 ≤0.05 mm/s</td></tr>
+          <tr><td>M3 → M1/M2</td><td>实验结束、设备撤场、管段检查</td><td>恢复运输压力、解除计划冻结、联锁自检</td><td>60 min 内恢复首班发车</td></tr>
+          <tr><td>任意 → M5 应急</td><td>联锁触发或人工确认</td><td>停发、隔离、制动、疏散、通报</td><td>所有在途舱体停稳，人员撤离</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">4.7</span>控制输入、输出与反馈链路</h4>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:16%">链路</th><th style="width:28%">输入</th><th style="width:28%">输出</th><th>反馈</th></tr></thead>
+        <tbody>
+          <tr><td>计划链</td><td>班次、货运、科研预约</td><td>区段占用、发车序列</td><td>准点率、延误原因</td></tr>
+          <tr><td>真空链</td><td>压力、漏率、泵组状态</td><td>泵速、阀位、隔离指令</td><td>压力趋势、抽气时间</td></tr>
+          <tr><td>运动链</td><td>速度曲线、前车位置</td><td>牵引力、制动力、悬浮力</td><td>实际速度、间隙、停车点</td></tr>
+          <tr><td>站点链</td><td>到发计划、旅客/货物</td><td>停靠许可、开门、发车许可</td><td>门对准、登乘完成、站台清空</td></tr>
+          <tr><td>安全链</td><td>压力、超速、门磁、地震</td><td>停发、隔离、紧急制动</td><td>联锁复位、事故记录</td></tr>
+          <tr><td>外部链</td><td>电网、海关、应急、科研</td><td>需量、舱单、通报、窗口</td><td>供电质量、放行、救援到达</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 05 ================= -->
+<section class="ch" id="ch5" data-sec="ch5">
+  <div class="sec-head">
+    <div class="sec-no">05</div>
+    <div class="sec-title">
+      <h2>系统安全分析</h2>
+      <div class="sec-en">System Safety Analysis · Risk &amp; RainingDay</div>
+      <p class="sec-lead">安全分析从“可能出什么事”开始，逐条写清风险来源、现象与影响；再用 RainingDay 场景把少见的组合故障展开，作为第 6 章安全需求的来源。</p>
+      <div class="sec-meta"><span>方法 风险识别 + 风险矩阵 + RainingDay</span><span>输出 10 项风险 · 6 个异常场景</span></div>
+    </div>
+  </div>
+
+  <div class="paper">
+    <div class="paper-head"><span>VPTS / SAFETY</span><span>05 · RISK ANALYSIS</span></div>
+
+    <h4><span class="h4n">5.1</span>分析范围与方法</h4>
+    <p class="lead">分析对象覆盖“管段—泵组—闸门—舱体—站点—调度”六个部分，以及跨境合规与网络攻击两类非物理风险。可能性与后果按 1—4 级打分，乘积用于排序，不替代定量风险评估。</p>
+    <p>风险识别参考了第 5 章的技术风险与 RainingDay 思路：先列正常与降级路径，再问“如果两个以上假设同时不成立会怎样”。凡是会同时影响多舱、多段或跨境的组合，都进入 RainingDay 清单。</p>
+
+    <h4><span class="h4n">5.2</span>风险清单</h4>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:20%">风险</th><th style="width:24%">来源</th><th style="width:18%">现象</th><th>影响</th></tr></thead>
+        <tbody>
+          <tr><td class="id">R-01</td><td>管段泄漏、失真空</td><td>焊缝疲劳、密封老化、第三方挖掘、材料放气</td><td>压力上升、漏率超限、局部气流噪声</td><td>高速舱体气动冲击、紧急制动、乘客恐慌；严重时舱体结构受载</td></tr>
+          <tr><td class="id">R-02</td><td>舱体故障</td><td>悬浮/导向失效、制动不足、车载电源故障</td><td>间隙越限、异常振动、减速能力下降</td><td>舱体停在管段中部、后方追踪受阻、乘客滞留</td></tr>
+          <tr><td class="id">R-03</td><td>地质灾害破坏管廊</td><td>地震、断层错动、冻土融沉、洪水冲刷</td><td>管段错位、接头开裂、基础下沉</td><td>失真空、线路中断、救援通道受阻</td></tr>
+          <tr><td class="id">R-04</td><td>人为破坏与网络攻击</td><td>恶意挖掘、无人机抛投、内部人员越权、勒索软件</td><td>入侵报警、控制指令异常、数据被加密</td><td>设备误动作、失去监控、停运与舆情</td></tr>
+          <tr><td class="id">R-05</td><td>泵组设备失效</td><td>轴承磨损、电机过热、阀卡涩、备电切换失败</td><td>抽速下降、压力缓慢上升、泵站跳机</td><td>真空维持能力下降，长时停运后需重新抽气</td></tr>
+          <tr><td class="id">R-06</td><td>压力冲击 / 水击</td><td>闸门快速关闭、破真空、紧急补气</td><td>压力波传播、管壁振动、噪声</td><td>管段与闸门受冲击载荷、传感器误判、二次泄漏</td></tr>
+          <tr><td class="id">R-07</td><td>跨境合规风险</td><td>许可撤回、关税变化、制裁、数据本地化、边境关闭</td><td>舱体滞留、查验加严、班次取消</td><td>商业中断、旅客滞留、合同违约</td></tr>
+          <tr><td class="id">R-08</td><td>站台事故与火灾</td><td>客流拥挤、门未对准、行李阻塞、电气短路</td><td>坠落、夹伤、烟感报警</td><td>人员伤亡、站台关闭、连锁延误</td></tr>
+          <tr><td class="id">R-09</td><td>通信与 SCADA 失效</td><td>光纤中断、卫星遮挡、服务器故障、软件缺陷</td><td>遥测丢失、指令超时、画面冻结</td><td>调度失去全局态势，退化为区域手动</td></tr>
+          <tr><td class="id">R-10</td><td>极端天气与长期腐蚀</td><td>高温、严寒、盐雾、沙尘、强风</td><td>设备过热/冻结、密封老化、结构腐蚀</td><td>可用率下降、维护成本上升、误报警</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">5.3</span>风险矩阵</h4>
+    <p class="lead">纵轴为可能性（1 低—4 高），横轴为后果（1 轻—4 严重）。红色格为优先处置区，橙色格为需要监测与预案区。</p>
+    <div class="tw">
+      <table class="tb table-lite" style="text-align:center">
+        <thead><tr><th style="width:18%">可能性 \ 后果</th><th>1 轻微</th><th>2 中等</th><th>3 严重</th><th>4 灾难</th></tr></thead>
+        <tbody>
+          <tr><td><strong>4 高</strong></td><td style="background:#F3E2C2">—</td><td style="background:#F3E2C2">—</td><td style="background:#EDC9B8">R-08</td><td style="background:#E7B6AC">R-01</td></tr>
+          <tr><td><strong>3 较高</strong></td><td style="background:#E4EEE4">—</td><td style="background:#F3E2C2">R-05 / R-10</td><td style="background:#EDC9B8">R-02 / R-07 / R-09</td><td style="background:#E7B6AC">—</td></tr>
+          <tr><td><strong>2 较低</strong></td><td style="background:#E4EEE4">—</td><td style="background:#F3E2C2">—</td><td style="background:#EDC9B8">R-06</td><td style="background:#E7B6AC">R-03 / R-04</td></tr>
+          <tr><td><strong>1 低</strong></td><td style="background:#E4EEE4">—</td><td style="background:#E4EEE4">—</td><td style="background:#F3E2C2">—</td><td style="background:#EDC9B8">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">矩阵为定性排序工具，分数来自小组讨论【作业推演】。R-01、R-02、R-03、R-04 进入第 6 章安全功能与接口需求；R-07 主要转为政策与应急需求。</p>
+
+    <h4><span class="h4n">5.4</span>RainingDay 异常运行场景</h4>
+    <p class="lead">RainingDay 不是“下雨天”，而是超出日常假设的异常组合。下列场景都要求系统在失去部分感知、通信或外部支持时，仍能导向安全状态。</p>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:10%">场景</th><th style="width:20%">触发条件</th><th style="width:38%">系统应对</th><th>退出 / 成功判据</th></tr></thead>
+        <tbody>
+          <tr><td class="id">RD-01</td><td>两座泵站同时失电，备用电源切换失败</td><td>停止新舱发车；在途舱体就近停靠或低速滑行至站点；隔离压力上升最快的一段；启动移动泵组</td><td>所有在途舱体停稳，故障段压力不再上升，移动泵组接入</td></tr>
+          <tr><td class="id">RD-02</td><td>舱体在管段中部失去悬浮，且车载备电只能维持 30 min</td><td>切换备份悬浮与磁轨制动；后方舱体减速保持间隔；救援舱从最近站点进入；舱内维持照明与氧气</td><td>舱体停稳、人员转移完成、管段隔离</td></tr>
+          <tr><td class="id">RD-03</td><td>地震导致两段错位，同时区域光纤中断</td><td>地震信号触发全线停发；区域控制器按本地硬线联锁隔离；卫星链路回传状态；无人机巡线</td><td>错位段确认、无在途舱体、抢修方案启动</td></tr>
+          <tr><td class="id">RD-04</td><td>跨境口岸临时关闭 72 h，货运舱已在途中</td><td>舱体在最近站点停靠；海关封志保持；冷链舱转备用电源；旅客改签，货物入监管仓</td><td>舱体安全停靠、货物状态可查、无非法入境</td></tr>
+          <tr><td class="id">RD-05</td><td>调度中心被勒索软件感染，SCADA 画面不可信</td><td>切断 IT 与 OT 连接；SIS 保持独立；区域中心转手动；以现场硬线仪表为准恢复控制</td><td>恶意进程清除、OT 网络重建、安全功能验证</td></tr>
+          <tr><td class="id">RD-06</td><td>科研窗口开始前 30 min 真空度不达标，且运输班次已售罄</td><td>科研窗口延期或缩段；运输计划恢复；已售班次改签；向科研用户说明指标偏差</td><td>科研用户确认改期，运输恢复无冲突</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 06 ================= -->
+<section class="ch" id="ch6" data-sec="ch6">
+  <div class="sec-head">
+    <div class="sec-no">06</div>
+    <div class="sec-title">
+      <h2>系统安全需求</h2>
+      <div class="sec-en">System Safety Requirements · Derived from Hazards</div>
+      <p class="sec-lead">安全需求由第 5 章风险与 RainingDay 场景派生，分为安全功能、安全性能、安全接口与非功能安全四类。每条需求都给出验证准则，便于后续设计评审与试验。</p>
+      <div class="sec-meta"><span>安全层 独立 SIS · SIL 2 目标</span><span>原则 故障安全 · 独立验证</span></div>
+    </div>
+  </div>
+
+  <div class="paper">
+    <div class="paper-head"><span>VPTS / SAFETY REQUIREMENTS</span><span>06 · DERIVED SAFETY REQUIREMENTS</span></div>
+
+    <h4><span class="h4n">6.1</span>派生关系</h4>
+    <p class="lead">安全需求不重复第 2 章的一般需求，只写“为了把某类风险压到可接受水平，系统必须额外具备什么”。派生关系按“风险 → 安全目标 → 安全需求 → 验证”组织。</p>
+    <div class="tw">
+      <table class="tb table-lite">
+        <thead><tr><th style="width:16%">风险</th><th style="width:28%">安全目标</th><th style="width:28%">派生需求</th><th>验证</th></tr></thead>
+        <tbody>
+          <tr><td>R-01 失真空</td><td>把压力波限制在一段内</td><td>SF-01、SP-01、SI-01</td><td>注入试验、联锁测试</td></tr>
+          <tr><td>R-02 舱体故障</td><td>舱体可控停稳并可救援</td><td>SF-02、SP-04、SI-04</td><td>悬浮失效试验</td></tr>
+          <tr><td>R-03 地质灾害</td><td>震后不产生二次事故</td><td>SF-06、SP-03、SI-02</td><td>震动台与错位演练</td></tr>
+          <tr><td>R-04 人为/网络</td><td>未授权指令不能改变安全状态</td><td>SF-08、SNF-04、SNF-06</td><td>渗透测试、权限审计</td></tr>
+          <tr><td>R-05 泵组失效</td><td>真空下降可控、可恢复</td><td>SF-01、SF-07、SP-02</td><td>泵组跳机试验</td></tr>
+          <tr><td>R-07 跨境合规</td><td>事故通报不因跨境而延迟</td><td>SI-03、SNF-05</td><td>桌面推演</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">6.2</span>安全功能需求</h4>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:50%">需求陈述</th><th style="width:12%">派生自</th><th>验证准则</th></tr></thead>
+        <tbody>
+          <tr><td class="id">SF-01</td><td>当管段压力达到 50 Pa 或漏率超过 0.2 Pa/h 时，系统应停止新舱发车、关闭相邻闸门，并向在途舱体发出紧急制动。</td><td>R-01 / R-05</td><td>注入漏率后 10 s 内完成停发与隔离</td></tr>
+          <tr><td class="id">SF-02</td><td>当舱体悬浮间隙、速度或制动能力超出安全包络时，系统应自动切换到备份或执行紧急制动，不得依赖驾驶员操作。</td><td>R-02</td><td>注入悬浮失效，舱体在 25 km 内停稳</td></tr>
+          <tr><td class="id">SF-03</td><td>闸门只有在区段无舱、压差在限、联锁许可三项同时满足时才能动作；任一项丢失应立即闭锁。</td><td>R-01 / R-06</td><td>模拟三项条件逐项丢失，闸门拒动</td></tr>
+          <tr><td class="id">SF-04</td><td>站台门与舱门未对准、未锁闭时，系统应禁止发车与开门；站台清空信号丢失时保持闭锁。</td><td>R-08</td><td>门偏差 50 mm 时发车指令被拒</td></tr>
+          <tr><td class="id">SF-05</td><td>探测到烟、火或危险品泄漏时，系统应停止相关区段、关闭通风与阀门，并启动灭火与疏散。</td><td>R-08</td><td>烟感触发后 30 s 内完成区段隔离</td></tr>
+          <tr><td class="id">SF-06</td><td>地震、管段位移或基础沉降超过阈值时，系统应自动停发、隔离受影响段，并禁止列车进入。</td><td>R-03</td><td>震动台触发，2 s 内输出停发</td></tr>
+          <tr><td class="id">SF-07</td><td>真空泵组全部失效时，系统应保持故障段隔离，按压力上升速率决定是否破真空救援。</td><td>R-05</td><td>泵组全停试验，压力可控、无连锁超压</td></tr>
+          <tr><td class="id">SF-08</td><td>任何来自普通 SCADA 或远程维护通道的指令，都不得绕过 SIS 直接改变停发、隔离与制动状态。</td><td>R-04</td><td>模拟越权指令，SIS 拒绝并报警</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">6.3</span>安全性能需求</h4>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:50%">需求陈述</th><th style="width:16%">指标</th><th>验证准则</th></tr></thead>
+        <tbody>
+          <tr><td class="id">SP-01</td><td>从压力越限被确认到闸门关闭、发车禁令生效，总时间应不超过 10 s。</td><td>≤10 s</td><td>注入试验计时，三次取最大值</td></tr>
+          <tr><td class="id">SP-02</td><td>安全联锁的平均危险失效概率应满足 SIL 2 目标，安全功能可用率不低于 99.5%。</td><td>PFDavg 10⁻³—10⁻²</td><td>安全回路 FMEDA 与证明测试记录</td></tr>
+          <tr><td class="id">SP-03</td><td>地震信号从传感器到停发指令的延迟应不超过 2 s；错位段判定不超过 5 min。</td><td>≤2 s / ≤5 min</td><td>震动台与现场演练</td></tr>
+          <tr><td class="id">SP-04</td><td>在 1,200 km/h 下触发紧急制动，舱体应在 25 km 内停稳，减速度不超过 2.5 m/s²。</td><td>≤25 km</td><td>制动试验与轨迹复核</td></tr>
+          <tr><td class="id">SP-05</td><td>事故后救援力量应在 60 min 内到达舱体位置，200 名乘客应在 90 min 内完成撤离。</td><td>≤60 / 90 min</td><td>全尺度救援演练</td></tr>
+          <tr><td class="id">SP-06</td><td>安全功能应每 6 个月完成一次证明测试；测试覆盖率不低于 95%，未覆盖项需分析补偿。</td><td>6 个月 / 95%</td><td>测试计划与记录审查</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">6.4</span>安全接口需求</h4>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:52%">需求陈述</th><th style="width:14%">接口</th><th>验证准则</th></tr></thead>
+        <tbody>
+          <tr><td class="id">SI-01</td><td>压力、漏率、门磁与地震信号应同时进入 SIS 的硬线输入与 SCADA 的监视通道，两者物理分开。</td><td>SIS / SCADA</td><td>断开 SCADA 通道，SIS 仍能触发</td></tr>
+          <tr><td class="id">SI-02</td><td>地震与位移监测网应覆盖全线，采样不低于 100 Hz，单点失效不影响相邻段判断。</td><td>监测网</td><td>断一点，剩余网络仍可报警</td></tr>
+          <tr><td class="id">SI-03</td><td>事故通报接口应同时支持专网、公网与卫星三条路径，任一可用即可送达应急机构。</td><td>应急通信</td><td>逐条断链，通报仍送达</td></tr>
+          <tr><td class="id">SI-04</td><td>救援舱与故障舱之间应提供机械对接、通话、供气与人员转移接口，接口在断电时仍可手动操作。</td><td>救援接口</td><td>断电状态完成对接与转移</td></tr>
+          <tr><td class="id">SI-05</td><td>安全联锁状态应向 OCC 与区域中心同时提供只读显示，显示不一致时以 SIS 为准。</td><td>OCC / 区域</td><td>制造显示偏差，系统提示以 SIS 为准</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">6.5</span>非功能安全需求</h4>
+    <div class="tw">
+      <table class="req">
+        <thead><tr><th style="width:8%">编号</th><th style="width:52%">需求陈述</th><th style="width:14%">类别</th><th>验证准则</th></tr></thead>
+        <tbody>
+          <tr><td class="id">SNF-01</td><td>安全相关功能应经过独立于设计团队的第三方评估，评估范围覆盖需求、设计、实现与运行。</td><td>独立评估</td><td>评估报告与不符合项关闭记录</td></tr>
+          <tr><td class="id">SNF-02</td><td>任何单一故障、单一操作失误或单一网络事件都不应直接导致多人死亡或全线瘫痪。</td><td>单点失效</td><td>HAZOP 与故障树复核</td></tr>
+          <tr><td class="id">SNF-03</td><td>失去电源、通信或时钟时，安全功能应导向停发、隔离或制动，不得保持最后指令。</td><td>故障安全</td><td>逐项断电试验</td></tr>
+          <tr><td class="id">SNF-04</td><td>安全网络与信息系统应按区域隔离，远程维护不得穿透到 SIS；所有维护会话留痕不少于 5 年。</td><td>网络安全</td><td>渗透测试与会话审计</td></tr>
+          <tr><td class="id">SNF-05</td><td>报警与处置界面应控制告警密度，单席每分钟不超过 10 条；关键告警必须给出唯一处置建议。</td><td>人因</td><td>模拟事故注入，测量处置时间与误操作</td></tr>
+          <tr><td class="id">SNF-06</td><td>调度、运维与应急人员应每 12 个月完成一次安全复训与全场景演练，未通过不得上岗。</td><td>能力</td><td>培训记录与演练评分</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="h4n">6.6</span>安全架构</h4>
+    <p class="lead">安全架构采用“被动层—主动层—运行层—应急层”四层，安全功能不集中在单一控制器。SIS 与 SCADA 物理分开，SCADA 失效不影响 SIS 的停发与隔离。</p>
+    <div class="tw">
+      <table class="tb">
+        <thead><tr><th style="width:14%">层级</th><th style="width:24%">构成</th><th style="width:30%">承担的安全功能</th><th>独立性要求</th></tr></thead>
+        <tbody>
+          <tr><td>被动层</td><td>管段分段、机械限位、防火分区、疏散通道</td><td>限制压力波、阻止火灾蔓延、提供撤离路径</td><td>不依赖控制电源</td></tr>
+          <tr><td>主动层</td><td>SIS、硬线回路、独立传感器</td><td>SF-01—SF-08、紧急制动、闸门闭锁</td><td>与 SCADA 物理隔离，SIL 2</td></tr>
+          <tr><td>运行层</td><td>OCC、区域中心、SCADA</td><td>监测、报警、降级调度、对外通报</td><td>可失效，失效后不阻断安全层</td></tr>
+          <tr><td>应急层</td><td>救援舱、消防、医疗、应急通信</td><td>人员转移、灭火、跨境通报</td><td>独立电源与通信路径</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>安全生存周期按“危险源登记—风险评估—安全需求—设计与实现—独立验证—运行监控—变更复审”闭环管理。任何涉及 SIS 逻辑、传感器布置或制动参数的变更，都必须重新做一次安全评估，不能只走普通工程变更流程。</p>
+
+    <h4><span class="h4n">6.7</span>验证与残余风险</h4>
+    <div class="tw">
+      <table class="tb table-lite">
+        <thead><tr><th style="width:18%">验证活动</th><th style="width:30%">覆盖需求</th><th>通过准则</th></tr></thead>
+        <tbody>
+          <tr><td>安全需求评审</td><td>SF / SP / SI / SNF 全部</td><td>每条可追溯到风险，语言可验证，无实现预设</td></tr>
+          <tr><td>联锁功能测试</td><td>SF-01—SF-08</td><td>触发条件、动作顺序、复位条件全部符合</td></tr>
+          <tr><td>SIL 评估</td><td>SP-02、SNF-01</td><td>PFDavg 落入 SIL 2 区间，独立评估通过</td></tr>
+          <tr><td>全尺度演练</td><td>SP-04、SP-05、RD-01—RD-06</td><td>停稳、撤离、通报均在时限内完成</td></tr>
+          <tr><td>运行监控</td><td>SP-06、SNF-06</td><td>证明测试与复训按周期完成，无逾期</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><b>残余风险声明：</b>本基线不能消除“超高速下的大规模结构失效”“跨洲政治关系突变”“极端地震组合”三类低概率高后果风险。它们通过线路避让、分段隔离、跨境协议与应急演练降低后果，但不能被证明为零。后续阶段应建立定量的风险接受准则，并明确由谁承担剩余风险。</div>
+
+    <h3 style="margin-top:38px">网页使用说明</h3>
+    <p>双击本文件即可在浏览器中打开。页面需要联网加载字体与 Mermaid CDN；若框图未显示，请确认网络可访问 jsDelivr，或刷新页面。顶部导航可跳转六章，表格在窄屏上可左右滑动。文中标注【作业推演】的数值仅用于课程讨论，不作为工程结论。</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="foot-in">
+    <div class="foot-t">VPTS · SYSTEM DEFINITION &amp; SyRS<br>系统工程 · 小组作业 3 · 2026-11-25</div>
+    <div class="foot-r">依据 ISO/IEC/IEEE 29148:2018 表 5-1<br>概念基线 · 待评审 · 非工程实施文件</div>
+  </div>
+</footer>
+<button id="toTop" aria-label="回到页首">↑</button>
+
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+mermaid.initialize({
+  startOnLoad: false,
+  securityLevel: "loose",
+  theme: "base",
+  fontFamily: '"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif',
+  themeVariables: {
+    background: "#FBF7EF",
+    primaryColor: "#F4EEE2",
+    primaryTextColor: "#1B2731",
+    primaryBorderColor: "#B38234",
+    lineColor: "#3E6F6B",
+    secondaryColor: "#E3F0EC",
+    tertiaryColor: "#EFE8DA",
+    fontSize: "13px"
+  },
+  flowchart: { curve: "linear", htmlLabels: true, useMaxWidth: true }
+});
+
+const nodes = Array.from(document.querySelectorAll(".mermaid"));
+for (let i = 0; i < nodes.length; i++) {
+  const node = nodes[i];
+  const code = node.textContent.trim();
+  try {
+    const { svg } = await mermaid.render("vpts-diagram-" + i, code);
+    node.innerHTML = svg;
+  } catch (err) {
+    console.error("Mermaid render failed:", err);
+    const box = node.parentElement.querySelector(".mermaid-fallback");
+    if (box) box.style.display = "block";
+  }
+}
+</script>
+<script>
+(function () {
+  "use strict";
+  var nav = Array.prototype.slice.call(document.querySelectorAll(".nav a"));
+  var secs = Array.prototype.slice.call(document.querySelectorAll("main section[data-sec]"));
+  var bar = document.getElementById("progBar");
+  var top = document.getElementById("toTop");
+  function onScroll() {
+    var y = window.scrollY + 110;
+    var cur = secs[0];
+    secs.forEach(function (s) {
+      if (s.getBoundingClientRect().top + window.scrollY <= y) cur = s;
+    });
+    nav.forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("href") === "#" + cur.id);
+    });
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    if (bar) bar.style.width = (max > 0 ? Math.min(100, window.scrollY / max * 100) : 0) + "%";
+    if (top) top.classList.toggle("on", window.scrollY > 600);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+  if (top) top.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+})();
+</script>
+</body>
+</html>
+
+
+
+
+
