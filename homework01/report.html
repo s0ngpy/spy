@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>面向洲际运输的高速真空管道系统 · 小组汇报</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --ink:#1B2733;
+  --body:#3B4652;
+  --muted:#7A8791;
+  --blue:#16456B;
+  --rule:#DDE3E9;
+  --rule2:#C7D1DA;
+}
+html{font-size:calc(min(100vw, 177.7778vh) / 100);}
+body{
+  margin:0;height:100vh;display:flex;align-items:center;justify-content:center;
+  background:#fff;color:var(--body);overflow:hidden;
+  font-family:"Segoe UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB","Source Han Sans SC",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+#stage{position:relative;width:100rem;height:56.25rem;background:#fff;overflow:hidden}
+
+/* ---------- 幻灯片基础 ---------- */
+.slide{position:absolute;inset:0;visibility:hidden}
+.slide.active{visibility:visible}
+.inner{position:absolute;inset:0;padding:5.2rem 8.4rem 5rem;display:flex;flex-direction:column;justify-content:center}
+
+.kicker{font-size:1.02rem;letter-spacing:.16em;color:var(--blue);font-weight:600;margin-bottom:1.5rem}
+h1{font-size:3rem;line-height:1.3;font-weight:600;color:var(--ink);margin:0;letter-spacing:.01em}
+.lead{font-size:1.3rem;line-height:1.75;color:var(--muted);margin:1.4rem 0 0;max-width:66rem}
+.head{margin-bottom:2.6rem}
+
+/* ---------- 要点 ---------- */
+ul.points{list-style:none;margin:0;padding:0;max-width:72rem}
+ul.points li{position:relative;padding-left:2.1rem;font-size:1.42rem;line-height:1.78;margin-bottom:1.7rem;color:var(--body)}
+ul.points li::before{content:"";position:absolute;left:0;top:.82rem;width:.62rem;height:.62rem;background:var(--blue)}
+ul.points li b{color:var(--ink);font-weight:600}
+.tight li{font-size:1.26rem;line-height:1.72;margin-bottom:1.15rem}
+.note{font-size:1.02rem;line-height:1.7;color:var(--muted);margin:1.8rem 0 0}
+
+/* ---------- 表格 ---------- */
+table{border-collapse:collapse;width:100%;table-layout:fixed}
+th{text-align:left;font-size:1.02rem;font-weight:600;color:var(--ink);padding:.55rem .8rem;border-bottom:1px solid var(--rule2);letter-spacing:.02em}
+td{font-size:1.14rem;line-height:1.62;padding:.62rem .8rem;border-bottom:1px solid var(--rule);vertical-align:top}
+td.c{color:var(--muted);font-size:1.02rem;white-space:nowrap}
+td.b{color:var(--ink);font-weight:600}
+
+/* ---------- 分栏 ---------- */
+.cols{display:grid;gap:4.4rem}
+h2{font-size:1.02rem;letter-spacing:.14em;color:var(--blue);font-weight:600;margin:0 0 1.25rem}
+
+/* ---------- 图 ---------- */
+.figure{width:100%;height:18rem}
+.mermaid{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.mermaid svg{display:block;max-width:none!important}
+.mermaid svg .labelBkg{background:transparent!important;border:0!important}
+.mermaid svg g.edgeLabel{background:transparent!important}
+.mermaid svg p{background:#FFFFFF!important;margin:0;padding:0 .35rem}
+.mermaid-off{font-size:1.12rem;line-height:1.95;color:var(--body);padding:0;display:block;height:auto}
+.cap{font-size:.98rem;line-height:1.7;color:var(--muted);margin-top:1rem}
+
+/* ---------- 封面 ---------- */
+.cover .inner{justify-content:flex-start;padding:9.5rem 12rem 6rem}
+.cover-title{font-size:4.9rem;line-height:1.34;color:var(--ink);font-weight:600;letter-spacing:.01em;max-width:88rem}
+.cover-sub{font-size:1.55rem;color:var(--blue);margin-top:2.2rem;letter-spacing:.04em}
+.cover-meta{position:absolute;left:12rem;bottom:7.5rem;font-size:1.12rem;color:var(--muted);line-height:2.1}
+.cover-meta .num{color:var(--body);letter-spacing:.02em}
+.cover-meta .hint{color:#AEB8C1;font-size:.98rem;letter-spacing:.06em}
+
+/* ---------- 目录 ---------- */
+.toc{list-style:none;margin:0;padding:0;width:100%}
+.toc li{display:grid;grid-template-columns:5rem 21rem 1fr 7rem;align-items:baseline;
+  padding:1.5rem 0;border-bottom:1px solid var(--rule);font-size:1.32rem}
+.toc li .num{color:var(--blue);font-size:1.15rem;letter-spacing:.08em}
+.toc li .t{color:var(--ink);font-weight:600}
+.toc li .d{color:var(--muted);font-size:1.12rem}
+.toc li .p{color:var(--muted);font-size:1.02rem;text-align:right;letter-spacing:.04em}
+
+/* ---------- 分层设计页 ---------- */
+.chain .figure{height:16rem}
+.arch .figure{height:26rem}
+.ctl .figure{height:24rem}
+.layers .figure{height:8rem}
+
+/* ---------- 结束页 ---------- */
+.end .inner{justify-content:center;padding-left:10rem}
+.end h1{font-size:6.2rem;letter-spacing:.02em}
+.end-sub{font-size:1.45rem;color:var(--muted);margin-top:2.4rem;line-height:1.9}
+
+/* ---------- 导航 ---------- */
+.hit{position:absolute;top:0;bottom:0;width:12%;z-index:9}
+.hit.prev{left:0}
+.hit.next{right:0}
+.track{position:fixed;left:0;right:0;bottom:0;height:3px;background:#EDF0F3;z-index:20}
+.fill{height:100%;width:0;background:var(--blue);transition:width .18s ease}
+.pageno{position:fixed;right:2.6rem;bottom:1.9rem;font-size:1rem;color:#A7B2BB;letter-spacing:.08em;z-index:21;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- ============ 01 封面 ============ -->
+<section class="slide cover active">
+  <div class="inner">
+    <h1 class="cover-title">面向洲际运输的<br>高速真空管道系统</h1>
+    <div class="cover-sub">复杂系统工程　课程小组汇报</div>
+    <div class="cover-meta">
+      <div><span class="num">小组成员　＿＿＿＿＿　＿＿＿＿＿　＿＿＿＿＿　＿＿＿＿＿</span></div>
+      <div><span class="num">四次作业整合　2026 年 11 月 27 日</span></div>
+      <div class="hint">← / → 翻页　·　点击左右边缘　·　F 全屏</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 目录 ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">目录</div>
+      <h1>四次作业，一条链路</h1>
+    </div>
+    <ol class="toc">
+      <li><span class="num">01</span><span class="t">系统定位</span><span class="d">三条既有通道的瓶颈与第四条骨干通道</span><span class="p">P 3</span></li>
+      <li><span class="num">02</span><span class="t">层级分解　作业 1</span><span class="d">任务到模块的六层拆分，本系统落在 Systems 层</span><span class="p">P 4—5</span></li>
+      <li><span class="num">03</span><span class="t">业务与相关方　作业 2</span><span class="d">BRS、ConOps、OpsCon 与 StRS</span><span class="p">P 6—7</span></li>
+      <li><span class="num">04</span><span class="t">需求与架构　作业 3</span><span class="d">SyRS、功能—逻辑—物理三视图、控制与安全</span><span class="p">P 8—10</span></li>
+      <li><span class="num">05</span><span class="t">场景与风险　作业 4</span><span class="d">六层场景、ODC、典型与风险场景</span><span class="p">P 11—14</span></li>
+      <li><span class="num">06</span><span class="t">总结</span><span class="d">逻辑链、核心判断与参数口径</span><span class="p">P 15</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 03 系统定位 ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">系统定位</div>
+      <h1>为什么还要第四条通道</h1>
+    </div>
+    <ul class="points">
+      <li>机场时刻、港口泊位、铁路口岸换装的增量已主要来自扩容，单靠加开航班与加铺轨道，边际成本持续上升。</li>
+      <li>真空把管内压力降到 1—10&nbsp;Pa 量级，气动阻力趋于可忽略；磁浮把轮轨摩擦换成电磁支撑，速度上限不再受接触约束。</li>
+      <li>按 4,680&nbsp;km 级走廊推演，单程 4.2—5.4&nbsp;h，其中巡航 3.84&nbsp;h，跨洲出行从"隔夜"变成"当日"。</li>
+      <li>管廊是共用骨架：牵引供电、跨境通信、科研真空实验与后续轨道延伸共用一条通道，土建一次到位。</li>
+    </ul>
+    <p class="note">文中距离、速度、时间均为本组推演，不对应任何真实线路。</p>
+  </div>
+</section>
+
+<!-- ============ 04 作业1 层级链 ============ -->
+<section class="slide chain">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 1　层级分解</div>
+      <h1>六层链路，本系统在 Systems 层</h1>
+      <p class="lead">上层给约束，下层给可执行的答案。层与层是问答关系，不是六套图纸。</p>
+    </div>
+    <div class="figure">
+      <div class="mermaid" data-alt="任务 Mission → 体系 SoS → 整机 Vehicles → 系统 Systems（本对象）→ 子系统 Subsystems → 模块 Modules">
+flowchart LR
+  M["L1 任务<br/>跨洲客货"] --> S["L2 体系<br/>六网协同"]
+  S --> V["L3 整机<br/>两类舱体"]
+  V --> Y["L4 系统<br/>本对象"]
+  Y --> B["L5 子系统<br/>七个职责"]
+  B --> D["L6 模块<br/>可下单单元"]
+  classDef target fill:#E8EEF4,stroke:#16456B,stroke-width:2px,color:#16456B;
+  class Y target;
+      </div>
+    </div>
+    <p class="cap">任务 Mission　→　体系 SoS　→　整机 Vehicles　→　系统 Systems　→　子系统 Subsystems　→　模块 Modules</p>
+    <ul class="points tight" style="margin-top:1.4rem">
+      <li>向上承接体系层的网络分工，向下拆出七个可独立验收的子系统。</li>
+      <li>L3 与 L4 的边界提前定死：整机层只谈对外表现，舱内分解全部归入舱体子系统，不重复计列。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 05 作业1 各层内容 ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 1　层级补全</div>
+      <h1>每一层到底要拍什么板</h1>
+    </div>
+    <table>
+      <colgroup><col style="width:10%"><col style="width:37%"><col style="width:53%"></colgroup>
+      <tr><th>层级</th><th>本组对象</th><th>这一层要回答的问题</th></tr>
+      <tr><td class="b">L1 任务</td><td>洲际高速客货运输、小时级跨洲通达</td><td>为什么做，收益用什么口径计量</td></tr>
+      <tr><td class="b">L2 体系</td><td>干线、枢纽、接驳、能源、通信、运维六网协同</td><td>靠哪些能独立运行的网络联合支撑</td></tr>
+      <tr><td class="b">L3 整机</td><td>客运舱、货运舱，含悬浮架与车载信息</td><td>人与货装进什么，才被完整运走</td></tr>
+      <tr><td class="b">L4 系统</td><td>真空管道运输系统（本对象），下辖七个子系统</td><td>整机与基础设施由哪几类功能拼成</td></tr>
+      <tr><td class="b">L5 子系统</td><td>管段、真空泵组、磁浮推进、闸门密封、舱体、调度控制、供电</td><td>一个系统内部还分哪几摊活</td></tr>
+      <tr><td class="b">L6 模块</td><td>传感、闸门、真空泵、磁浮导轨、通信等可下单单元</td><td>哪些单元能上台架、能独立更换</td></tr>
+    </table>
+    <p class="note">子系统按功能切，内部要素按对象分：管段、泵组、隔离闸门、舱体、调度中心是五个可指认的实体，子系统则是七个可验收的职责块。</p>
+  </div>
+</section>
+
+<!-- ============ 06 作业2 业务与运行概念 ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 2　业务与运行概念</div>
+      <h1>业务要什么，运行怎么排</h1>
+      <p class="lead">三份材料各回答一层：BRS 说业务为什么成立，ConOps 说用户怎么用，OpsCon 说系统分几段、按几档跑。</p>
+    </div>
+    <div class="cols" style="grid-template-columns:1fr;gap:3.4rem">
+      <div>
+        <h2>BRS　业务需求</h2>
+        <ul class="points tight" style="max-width:80rem">
+          <li>以站间客运与夜间整舱货运为核心产品，按长期时段合约出售运力，开通即在三个及以上法域连续运行。</li>
+          <li>单泵站或单回路失电时维持不低于 80% 班次；发车与到站偏差按舱次计量、可追溯。</li>
+        </ul>
+      </div>
+      <div>
+        <h2>ConOps　使用概念</h2>
+        <ul class="points tight" style="max-width:80rem">
+          <li>旅客侧四步：值机安检、登舱密封、到站下舱，全程不接触运行控制。</li>
+          <li>科研侧按预约占用管段，窗口内真空度与振动写入协议，窗口结束即恢复客运。</li>
+        </ul>
+      </div>
+      <div>
+        <h2>OpsCon　运行方案</h2>
+        <ul class="points tight" style="max-width:80rem">
+          <li>生命周期四段：组建与许可、建设与调试、首运与提量、商业运行与延寿；运行分正常、降级、应急三档，对应状态机十态。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 作业2 相关方 ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 2　相关方与 StRS</div>
+      <h1>谁决定这条通道能不能修成</h1>
+      <p class="lead">相关方不进决策链，但通过许可、合约、监管与社区同意，决定业务能否成立。</p>
+    </div>
+    <div class="cols" style="grid-template-columns:34rem 1fr">
+      <div>
+        <h2>相关方　四类</h2>
+        <ul class="points tight">
+          <li><b>治理与监管</b>　跨洲管委会、各法域监管、海关边检</li>
+          <li><b>资本与建设</b>　投资方、EPC 联合体、保险与再保险</li>
+          <li><b>运营与用户</b>　运营商、站点、乘客、托运人</li>
+          <li><b>外部条件</b>　电网、既有交通、沿线社区、科研机构</li>
+        </ul>
+      </div>
+      <div>
+        <h2>核心相关方需求</h2>
+        <ul class="points tight">
+          <li><b>SR-01 海关</b>　舱单、名单与封志一次核验，联合查验 ≤90&nbsp;min，回执驱动放行。</li>
+          <li><b>SR-02 托运人</b>　可查预留时段与实际到发记录，偏差追溯到具体舱次。</li>
+          <li><b>SR-03 科研机构</b>　窗口内真空度、振动、电磁数据可导出，抽样 ≥1&nbsp;Hz。</li>
+          <li><b>SR-04 应急与电网</b>　事故信息 60&nbsp;s 内推送消防与救援，不依赖公网。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">治理与监管、资本两类按"保持满意"处理；运营用户与沿线社区按"持续沟通"处理。</p>
+  </div>
+</section>
+
+<!-- ============ 08 作业3 SyRS ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 3　系统需求规格 SyRS</div>
+      <h1>每条需求只写一个可判定的结果</h1>
+    </div>
+    <table>
+      <colgroup><col style="width:9%"><col style="width:8%"><col style="width:47%"><col style="width:24%"><col style="width:12%"></colgroup>
+      <tr><th>类别</th><th>编号</th><th>需求</th><th>指标（本组推演）</th><th>验证</th></tr>
+      <tr><td class="c">功能</td><td class="c">FR-03</td><td>连续维持管内压力，越限自动隔离故障段并阻止新舱进入</td><td>30&nbsp;Pa 预警 / 50&nbsp;Pa 隔离</td><td class="c">T</td></tr>
+      <tr><td class="c">功能</td><td class="c">FR-05</td><td>客运、货运、科研三种占用互斥，切换前完成清场与压力确认</td><td>十态状态机走查</td><td class="c">D</td></tr>
+      <tr><td class="c">性能</td><td class="c">PR-01</td><td>站到站客运单程时间受上限约束</td><td>≤5.4&nbsp;h / 4,680&nbsp;km</td><td class="c">T</td></tr>
+      <tr><td class="c">性能</td><td class="c">PR-04</td><td>同向追踪间隔必须大于当前速度下的制动距离</td><td>[6, 12] min</td><td class="c">A</td></tr>
+      <tr><td class="c">接口</td><td class="c">EI-01</td><td>双回路受电，单回路失去时降级运行</td><td>≥400&nbsp;MW；±7%</td><td class="c">T</td></tr>
+      <tr><td class="c">接口</td><td class="c">EI-02</td><td>向海关提交舱单、名单与封志，接收查验结论后放行</td><td>查验 ≤90&nbsp;min</td><td class="c">D</td></tr>
+      <tr><td class="c">接口</td><td class="c">II-01</td><td>调度向区段下发设定值与占用许可，并接收回执</td><td>≤100&nbsp;ms</td><td class="c">T</td></tr>
+      <tr><td class="c">安全</td><td class="c">SF-01</td><td>压力越限到段端闸门关闭到位</td><td>≤3&nbsp;s</td><td class="c">T</td></tr>
+    </table>
+    <p class="note">类型标 D 分解 / I 继承 / A 分配，验证标 A 分析 / I 检查 / D 演示 / T 试验；环境、地震、安保与合规约束未在本页展开。</p>
+  </div>
+</section>
+
+<!-- ============ 09 作业3 初始架构 ============ -->
+<section class="slide arch">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 3　初始架构</div>
+      <h1>功能 → 逻辑 → 物理</h1>
+      <p class="lead">按 15288 的架构过程：先按功能切，再按职责归并，最后落到可布置的物理单元，三张视图逐层可追溯。</p>
+    </div>
+    <div class="figure">
+      <div class="mermaid" data-alt="功能架构（运送 / 真空维持 / 调度 / 能源 / 安全 / 信息服务）→ 逻辑架构（调度层 / 区段控制层 / 舱体控制层 / 安全联锁层 / 站点支撑）→ 物理架构（管段 / 泵站 / 隔离闸门 / 舱体 / 调度中心）">
+flowchart TB
+  subgraph F["功能架构"]
+    direction LR
+    f1["运送<br/>加速·巡航·停靠"] --> f2["真空维持<br/>抽气·监测·隔离"]
+    f2 --> f3["调度<br/>班次·占用·模式"] --> f4["能源<br/>牵引·储能·回收"]
+    f4 --> f5["安全<br/>联锁·疏散·通报"] --> f6["信息服务<br/>广播·舱单·数据"]
+  end
+  subgraph G["逻辑架构"]
+    direction LR
+    g1["调度层"] --> g2["区段控制层"] --> g3["舱体控制层"]
+    g3 --> g4["安全联锁层"] --> g5["站点·支撑层"]
+  end
+  subgraph H["物理架构"]
+    direction LR
+    h1["干线管段"] --> h2["泵站"] --> h3["隔离闸门"]
+    h3 --> h4["舱体"] --> h5["调度中心"]
+  end
+  F --> G
+  G --> H
+      </div>
+    </div>
+    <ul class="points tight" style="margin-top:1.8rem">
+      <li>功能域切完再归并，避免同一台设备被两个系统重复计列；物理层按每 40—60&nbsp;km 一组泵站、段间设隔离闸门布置。</li>
+      <li>本组选分区自治：中心只做协调与对账，单区段失效不拖全线；集中调度与分区自治加权 3.70 : 3.90（组内讨论值）。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 10 作业3 控制与安全 ============ -->
+<section class="slide ctl">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 3　控制与安全</div>
+      <h1>谁下指令，谁在异常时越过指令</h1>
+    </div>
+    <div class="figure">
+      <div class="mermaid" data-alt="调度中心 → 区段控制器 → 执行层（泵组·闸门·舱体）→ 管段与舱体 → 传感 → 实测反馈回区段；安全联锁独立于调度，越限直接截断">
+flowchart LR
+  SC["调度中心<br/>班次 · 占用"] -->|"设定值与许可"| SEG["区段控制器<br/>抽气 · 闸门"]
+  SEG --> ACT["执行层<br/>泵组 · 舱体"]
+  ACT --> PL["管段与舱体"]
+  PL --> SE["传感<br/>压力 · 间隙"]
+  SE -.->|"实测反馈"| SEG
+  SE -->|"越限"| SF["安全联锁<br/>独立供电"]
+  SF -.->|"截断 · 制动"| ACT
+      </div>
+    </div>
+    <div class="cols" style="grid-template-columns:1fr 1fr;gap:3.6rem;margin-top:1.8rem">
+      <div>
+        <ul class="points tight" style="max-width:none">
+          <li>调度按小时滚动刷新班次与占用，向区段下发设定值；区段每 100&nbsp;ms 回传实测值与回执，超时未回执即转本地保持。</li>
+          <li>安全联锁独立供电、物理隔离，只接收状态、不回传控制；越限直接截断、闭锁、制动，不等调度确认。</li>
+        </ul>
+      </div>
+      <div>
+        <ul class="points tight" style="max-width:none">
+          <li>速度环、悬浮环、制动环共用状态估计，执行机构分开，任一环失效仍可降级运行。</li>
+          <li>真空三线：1—10&nbsp;Pa 工作；超 30&nbsp;Pa 预警停进；超 50&nbsp;Pa 或 3&nbsp;s 上升 5&nbsp;Pa 关闸隔离。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 作业4 场景分层 ============ -->
+<section class="slide layers">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 4　场景分层</div>
+      <h1>六个层：从固定几何到信息条件</h1>
+      <p class="lead">层名按"管廊—轨道"类系统改写，保留原分层逻辑；分层只用于拆解，不用于排优先级。</p>
+    </div>
+    <div class="figure">
+      <div class="mermaid" data-alt="L1 拓扑 → L2 结构 / 标识 → L3 临时限制 → L4 动态参与者 → L5 环境 → L6 数字信息">
+flowchart LR
+  a["L1 拓扑"] --> b["L2 结构"] --> c["L3 临时限制"] --> d["L4 参与者"] --> e["L5 环境"] --> f["L6 信息"]
+      </div>
+    </div>
+    <table style="margin-top:1.4rem">
+      <colgroup><col style="width:7%"><col style="width:13%"><col style="width:42%"><col style="width:38%"></colgroup>
+      <tr><th>层</th><th>层名</th><th>映射到管道系统的含义</th><th>主要要素</th></tr>
+      <tr><td class="c">L1</td><td class="b">拓扑层</td><td>干线分段、站点位置、泵站间距、旁通与联络管</td><td>段号与长度、纵坡、曲线半径、单向或双向</td></tr>
+      <tr><td class="c">L2</td><td class="b">结构 / 标识</td><td>管径与舱径、闸门位置、隔离段编号、限速与限压标识</td><td>管内径、舱外径、悬浮间隙、站台门编号、疏散口</td></tr>
+      <tr><td class="c">L3</td><td class="b">临时限制</td><td>检修封锁、降级限速、破真空作业、施工占用</td><td>封锁段与时段、限速值、破真空范围、进入许可</td></tr>
+      <tr><td class="c">L4</td><td class="b">动态参与者</td><td>在途舱体、站内旅客、装卸车辆、检修与救援人员</td><td>舱数与间隔、载员、站台人数密度、救援舱位置</td></tr>
+      <tr><td class="c">L5</td><td class="b">环境层</td><td>气温、风、降水、地震、冻土融沉、口岸开关状态</td><td>气温区间、风速、烈度与加速度阈值、雷暴日数</td></tr>
+      <tr><td class="c">L6</td><td class="b">数字信息</td><td>SCADA 链路、授时、舱单与名单、放行状态、科研窗口</td><td>时延与中断时长、授时偏差、舱单完整率、备份链路</td></tr>
+    </table>
+    <p class="note">同一场景通常同时落在 4—5 层：巡航中失真空，就同时涉及 L2 结构、L5 外部扰动与 L6 报警链路。</p>
+  </div>
+</section>
+
+<!-- ============ 12 作业4 ODC ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 4　运行设计条件 ODC</div>
+      <h1>三条边界同时成立，才叫正常运行</h1>
+      <p class="lead">ODD 管外部环境，系统状态管能不能发车，人员状态管谁能进去；任一越界即退出正常运行。</p>
+    </div>
+    <div class="cols" style="grid-template-columns:28rem 26rem 1fr;gap:3.6rem">
+      <div>
+        <h2>ODD　外部运行范围</h2>
+        <ul class="points tight" style="max-width:none">
+          <li>干线 3,000—6,000&nbsp;km，纵坡 ≤3%，海拔 ≤2,500&nbsp;m。</li>
+          <li>管内径 3.0—3.4&nbsp;m，舱外径 2.2—2.6&nbsp;m，悬浮间隙 8—14&nbsp;mm。</li>
+          <li>压力 1—10&nbsp;Pa 正常，30&nbsp;Pa 预警，50&nbsp;Pa 隔离；漏率 0.05—0.2&nbsp;Pa/h。</li>
+          <li>气温 −40—+50&nbsp;°C，风速 ≤12 级，地震设防 ≤VIII 度。</li>
+          <li>口岸开放、联合查验 ≤90&nbsp;min；通信中断 ≤30&nbsp;min 可降级。</li>
+        </ul>
+      </div>
+      <div>
+        <h2>系统状态　十态摘关键</h2>
+        <ul class="points tight" style="max-width:none">
+          <li>SS-1—3 待发、登乘密封、抽真空：可载客，不可发车。</li>
+          <li>SS-4—6 加速、巡航、减速：可载客，按区段许可运行。</li>
+          <li>SS-8 检修隔离：不载客、不发车，破真空或待入。</li>
+          <li>SS-9 降级：限流发车，须调度确认；SS-10 应急：只放行救援舱。</li>
+        </ul>
+      </div>
+      <div>
+        <h2>人员状态　四类用户</h2>
+        <ul class="points tight" style="max-width:none">
+          <li>乘客：完成值机安检、能自主行动、不接触运行控制。</li>
+          <li>运维：两人同行、入段前气体检测、分区挂牌上锁。</li>
+          <li>调度：2 值 1 备，连续值守 ≤8&nbsp;h，交接 ≥10&nbsp;min。</li>
+          <li>科研：清单审核通过、只读接口，不得操作运输控制。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">地震阈值 0.03—0.08&nbsp;g 最难标定：偏低会频繁误停发，偏高可能在管段错位后才动作【作业推演】。</p>
+  </div>
+</section>
+
+<!-- ============ 13 作业4 典型场景 ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 4　典型场景</div>
+      <h1>日间客运：4,680&nbsp;km 一次巡航</h1>
+    </div>
+    <div class="cols" style="grid-template-columns:46rem 1fr;gap:4rem">
+      <div>
+        <h2>P1—P6　按时序</h2>
+        <table>
+          <colgroup><col style="width:28%"><col style="width:18%"><col style="width:54%"></colgroup>
+          <tr><th>阶段</th><th>时长</th><th>通过条件</th></tr>
+          <tr><td class="b">P1 登舱密封</td><td class="c">21&nbsp;min</td><td>两门对位、密封信号到位</td></tr>
+          <tr><td class="b">P2 抽真空</td><td class="c">32&nbsp;min</td><td>降至 6&nbsp;Pa 并保压 5&nbsp;min</td></tr>
+          <tr><td class="b">P3 加速</td><td class="c">227&nbsp;s</td><td>0.145&nbsp;g 达 1,200&nbsp;km/h</td></tr>
+          <tr><td class="b">P4 巡航</td><td class="c">3.84&nbsp;h</td><td>间隔 8&nbsp;min，压力 4—6&nbsp;Pa</td></tr>
+          <tr><td class="b">P5 减速</td><td class="c">227&nbsp;s</td><td>停靠偏差 0.2&nbsp;m</td></tr>
+          <tr><td class="b">P6 泄压开闸</td><td class="c">27&nbsp;min</td><td>≤3&nbsp;kPa/s 补气，停靠 16&nbsp;min</td></tr>
+        </table>
+      </div>
+      <div>
+        <h2>三层递进</h2>
+        <ul class="points tight" style="max-width:none">
+          <li><b>功能场景</b>　值机安检、登舱、抽真空、加速、巡航、到站下舱，只写行为不写数值。</li>
+          <li><b>逻辑场景</b>　速度 1,100—1,300&nbsp;km/h、间隔 <span style="white-space:nowrap">6—12&nbsp;min</span>、加速度 <span style="white-space:nowrap">0.10—0.15&nbsp;g</span>，取区间。</li>
+          <li><b>具体场景</b>　固定 4,680&nbsp;km、198 人、6&nbsp;Pa、8&nbsp;min、4.2&nbsp;h，作讨论与试验的基准实例。</li>
+        </ul>
+        <p class="note" style="margin-top:1rem">单程 4.2&nbsp;h ＝ 3.84&nbsp;h 巡航 ＋ 7.6&nbsp;min 加减速 ＋ 16&nbsp;min 停靠。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 14 作业4 风险场景 ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">作业 4　风险场景</div>
+      <h1>正常、临险、事故：怎么分，谁动作</h1>
+    </div>
+    <div class="cols" style="grid-template-columns:repeat(3,1fr);gap:4rem;align-items:start">
+      <div>
+        <h2>正常　ODC 内运行</h2>
+        <p style="font-size:1.06rem;color:var(--muted);margin:0 0 1rem">仅需常规调整，无人员伤害与结构损伤。</p>
+        <ul class="points tight" style="max-width:none">
+          <li><b>RS-14</b>　巡航中单泵切备，压力在 1—10&nbsp;Pa 内小幅抖动。</li>
+          <li>响应：自动切备并记录，班次不变。</li>
+        </ul>
+      </div>
+      <div>
+        <h2>临险　逼近边界</h2>
+        <p style="font-size:1.06rem;color:var(--muted);margin:0 0 1rem">需降速、限流或人工接管，尚未造成后果。</p>
+        <ul class="points tight" style="max-width:none">
+          <li><b>RS-02</b>　抽真空 32&nbsp;min 后压力仍高于 10&nbsp;Pa，抽速不足或漏率超 0.2&nbsp;Pa/h。</li>
+          <li>响应：延长抽气或切备泵；二次不达标取消班次并转舱。</li>
+        </ul>
+      </div>
+      <div>
+        <h2>事故　已造成后果</h2>
+        <p style="font-size:1.06rem;color:var(--muted);margin:0 0 1rem">人员伤害、结构损伤或被迫停运。</p>
+        <ul class="points tight" style="max-width:none">
+          <li><b>RS-07</b>　巡航段 3&nbsp;s 内压力上升超 5&nbsp;Pa，泄漏或第三方破坏。</li>
+          <li>响应：停发、关闭相邻闸门、舱体紧急制动、隔离故障段、对外通报。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">14 条风险中正常 2、临险 6、事故 6，定级为组内讨论结果；其中 4 条反写了 ODD：压力上升速率成为独立边界，通信中断 ≤30&nbsp;min 写入外部条件。</p>
+  </div>
+</section>
+
+<!-- ============ 15 总结 ============ -->
+<section class="slide">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">总结</div>
+      <h1>四次作业连成一条链</h1>
+    </div>
+    <div class="cols" style="grid-template-columns:34rem 1fr;gap:5rem">
+      <div>
+        <h2>从层级到场景</h2>
+        <ul class="points tight">
+          <li><b>作业 1</b>　谁在哪一层，向上交什么、向下要什么。</li>
+          <li><b>作业 2</b>　为什么做，谁提要求，怎么用起来。</li>
+          <li><b>作业 3</b>　做什么，怎么验，谁在异常时越权。</li>
+          <li><b>作业 4</b>　在什么条件下运行，边界画在哪。</li>
+        </ul>
+      </div>
+      <div>
+        <h2>本组三条判断</h2>
+        <ul class="points tight">
+          <li>速度、间隔、压力三者耦合，不能分别立项：1,200&nbsp;km/h 与 6&nbsp;min 间隔的安全余量必须一起校核。</li>
+          <li>决策下沉到区段：洲际距离下通信与地质中断是常态，中心只做协调与对账。</li>
+          <li>最难定的不是结构，是地震阈值与跨境应急指挥权——属数据与制度问题。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">【作业推演】4,680&nbsp;km、1,200&nbsp;km/h、1—10&nbsp;Pa、6—12&nbsp;min 间隔、0.03—0.08&nbsp;g 阈值、200 人 / 60&nbsp;t。以上参数用于演示方法与可验证性，进入工程阶段需按实测走廊重新标定。</p>
+  </div>
+</section>
+
+<!-- ============ 16 结束页 ============ -->
+<section class="slide end">
+  <div class="inner">
+    <h1>Q &amp; A</h1>
+    <p class="end-sub">谢谢。<br>材料整合自四次小组作业，参数标注为作业推演，欢迎就层级边界与 ODD 口径提问。</p>
+    <p class="note" style="position:absolute;left:10rem;bottom:6rem">面向洲际运输的高速真空管道系统　·　复杂系统工程　·　2026 年 11 月</p>
+  </div>
+</section>
+
+<div class="hit prev" id="prev"></div>
+<div class="hit next" id="next"></div>
+</div>
+
+<div class="track"><div class="fill" id="fill"></div></div>
+<div class="pageno" id="pageno">01 / 16</div>
+
+<script src="https://fastly.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i = 0, fill = document.getElementById('fill'), pageno = document.getElementById('pageno');
+
+  function go(n){
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function(s, k){ s.classList.toggle('active', k === i); });
+    fill.style.width = ((i + 1) / slides.length * 100) + '%';
+    pageno.textContent = ('0' + (i + 1)).slice(-2) + ' / ' + slides.length;
+  }
+
+  function toggleFS(){
+    if(!document.fullscreenElement){
+      if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function(){});
+    } else {
+      if(document.exitFullscreen) document.exitFullscreen().catch(function(){});
+    }
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' '){ go(i + 1); e.preventDefault(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp'){ go(i - 1); e.preventDefault(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(slides.length - 1); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFS(); }
+  });
+
+  document.getElementById('prev').addEventListener('click', function(){ go(i - 1); });
+  document.getElementById('next').addEventListener('click', function(){ go(i + 1); });
+
+  var sx = 0;
+  document.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - sx;
+    if(Math.abs(dx) > 40) go(dx < 0 ? i + 1 : i - 1);
+  }, {passive:true});
+
+  go(0);
+
+  /* 统一为单色线稿：白底、深灰边、目标节点用主色 */
+  function styleDiagrams(){
+    document.querySelectorAll('.mermaid svg').forEach(function(svg){
+      svg.querySelectorAll('g.node').forEach(function(g){
+        var target = g.classList.contains('target');
+        g.querySelectorAll('rect,path,polygon').forEach(function(sh){
+          sh.style.fill = target ? '#E8EEF4' : '#FFFFFF';
+          sh.style.stroke = target ? '#16456B' : '#455562';
+          sh.style.strokeWidth = target ? '2px' : '1px';
+        });
+        g.querySelectorAll('span,text').forEach(function(t){
+          t.style.color = target ? '#16456B' : '#1B2733';
+          t.style.fill = target ? '#16456B' : '#1B2733';
+          if(target) t.style.fontWeight = '600';
+        });
+      });
+      svg.querySelectorAll('.cluster rect').forEach(function(r){ r.style.fill = '#FFFFFF'; r.style.stroke = '#C7D1DA'; });
+      svg.querySelectorAll('.cluster-label span,.cluster-label text').forEach(function(t){ t.style.color = '#6E7B86'; t.style.fill = '#6E7B86'; });
+      svg.querySelectorAll('.edgeLabel').forEach(function(g){
+        g.querySelectorAll('rect').forEach(function(r){ r.style.fill = '#FFFFFF'; r.style.stroke = 'none'; });
+        g.querySelectorAll('span,text').forEach(function(t){ t.style.color = '#6E7B86'; t.style.fill = '#6E7B86'; t.style.background = 'transparent'; });
+      });
+      svg.querySelectorAll('.edgePath path,.flowchart-link').forEach(function(p){ p.style.stroke = '#455562'; });
+    });
+  }
+
+  /* 把每张图按可用区域等比缩放，保证与页面文字同一比例体系 */
+  function fitDiagrams(){
+    document.querySelectorAll('.mermaid').forEach(function(w){
+      var svg = w.querySelector('svg');
+      if(!svg || !svg.viewBox || !svg.viewBox.baseVal || !svg.viewBox.baseVal.width) return;
+      var vb = svg.viewBox.baseVal;
+      var aw = w.clientWidth, ah = w.clientHeight;
+      if(!aw || !ah) return;
+      var s = Math.min(aw / vb.width, ah / vb.height);
+      svg.style.width = Math.round(vb.width * s) + 'px';
+      svg.style.height = Math.round(vb.height * s) + 'px';
+    });
+  }
+
+  function fallback(){
+    document.querySelectorAll('.mermaid').forEach(function(n){
+      n.classList.remove('mermaid');
+      n.classList.add('mermaid-off');
+      n.textContent = n.getAttribute('data-alt') || '';
+    });
+  }
+
+  window.addEventListener('load', function(){
+    if(!window.mermaid){ fallback(); return; }
+    try{
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'base',
+        fontFamily: 'Segoe UI, Microsoft YaHei, PingFang SC, sans-serif',
+        themeVariables: {
+          primaryColor: '#FFFFFF',
+          primaryTextColor: '#1B2733',
+          primaryBorderColor: '#3B4A57',
+          lineColor: '#3B4A57',
+          secondaryColor: '#FFFFFF',
+          tertiaryColor: '#FFFFFF',
+          fontSize: '15px'
+        },
+        flowchart: { curve: 'linear', useMaxWidth: true, nodeSpacing: 16, rankSpacing: 34 }
+      });
+      mermaid.run({ querySelector: '.mermaid' }).then(function(){
+        styleDiagrams();
+        fitDiagrams();
+        window.addEventListener('resize', function(){ fitDiagrams(); });
+        document.addEventListener('fullscreenchange', function(){ setTimeout(fitDiagrams, 60); });
+      }).catch(fallback);
+    }catch(err){ fallback(); }
+  });
+})();
+</script>
+</body>
+</html>
