@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<!-- 系统工程 小组作业统一版 · 单文件 HTML · 内联 CSS · 仅联网加载字体与 Mermaid -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>真空管道洲际运输系统 · 场景分层与运行设计条件</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070D14'/%3E%3Cpath d='M6 21h20' stroke='%23D8A05A' stroke-width='1.6'/%3E%3Cpath d='M8 21a8 8 0 0 1 16 0' stroke='%23D8A05A' stroke-width='1.6' fill='none'/%3E%3Ccircle cx='16' cy='12' r='2' fill='%235FA8A8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://miaoda.feishu.cn">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&amp;family=Noto+Serif+SC:wght@400;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+/* ===== 共用样式：系统工程四次作业统一版（深色 · 图底 · 备忘录式排版） ===== */
+:root{
+  --bg:#070D14; --bg2:#0A141E; --panel:#0B1722; --panel2:#0E1C28;
+  --ink:#E6EDF3; --text:#CBD6DF; --muted:#8FA2B2; --dim:#6C7F90;
+  --accent:#D8A05A; --accent-d:#B98544; --cyan:#5FA8A8;
+  --line:rgba(146,175,196,.16); --line2:rgba(146,175,196,.3); --line3:rgba(146,175,196,.08);
+  --serif:"Noto Serif SC","Songti SC",Georgia,serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,monospace;
+  --max:1080px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14.2px;line-height:1.85;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(820px 520px at 78% -8%,rgba(216,160,90,.07),transparent 62%),
+             radial-gradient(700px 480px at 4% 8%,rgba(95,168,168,.05),transparent 60%)}
+::selection{background:rgba(216,160,90,.26);color:#fff}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+img{max-width:100%;display:block}
+
+/* ---- 顶栏 ---- */
+.top{position:sticky;top:0;z-index:60;background:rgba(7,13,20,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.top-in{max-width:1240px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;gap:26px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--accent);white-space:nowrap}
+.brand s{width:16px;height:1px;background:var(--accent-d);display:inline-block;text-decoration:none}
+.brand em{font-style:normal;color:var(--dim);letter-spacing:.08em}
+.nav{margin-left:auto;display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex:0 0 auto;padding:19px 10px;font-size:12px;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap}
+.nav a i{font-family:var(--mono);font-style:normal;font-size:9.5px;color:rgba(216,160,90,.65);margin-right:5px}
+.nav a:hover{color:var(--ink);text-decoration:none}
+.nav a.on{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ---- 首屏 ---- */
+.hero{position:relative;min-height:352px;display:flex;align-items:flex-end;overflow:hidden;border-bottom:1px solid var(--line2)}
+.hero-bg{position:absolute;inset:0;background:#0A1826 url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80") center 38%/cover no-repeat;filter:grayscale(.45) saturate(.6) brightness(1.02)}
+.hero-bg::after{content:"";position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(7,13,20,.96) 0%,rgba(7,13,20,.84) 46%,rgba(7,13,20,.38) 100%),
+  linear-gradient(0deg,rgba(7,13,20,1) 0%,rgba(7,13,20,.30) 58%,rgba(7,13,20,.56) 100%)}
+.hero-in{position:relative;z-index:2;width:100%;max-width:1240px;margin:0 auto;padding:74px 24px 30px}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--cyan);margin-bottom:16px}
+.kick span{color:var(--accent)}
+.hero h1{font-family:var(--serif);font-size:clamp(28px,4.1vw,42px);line-height:1.3;font-weight:600;color:#F1F5F8;margin:0;max-width:20em;letter-spacing:.005em}
+.hero h1 em{font-style:normal;color:var(--accent);display:block}
+.hero .sub{max-width:64ch;margin:16px 0 0;font-size:13.8px;line-height:1.85;color:#B6C6D4}
+.hero .meta{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:26px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);font-family:var(--mono);font-size:9.5px;color:rgba(180,200,212,.65);letter-spacing:.05em;max-width:900px}
+
+/* ---- 版心与章节 ---- */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px;position:relative;z-index:1}
+section{padding:46px 0 8px;border-top:1px solid var(--line)}
+section.first{border-top:0;padding-top:44px}
+.sec-h{display:grid;grid-template-columns:62px 1fr;gap:14px;align-items:end;margin-bottom:12px}
+.sec-n{font-family:var(--serif);font-size:30px;line-height:.95;color:var(--accent);font-weight:600}
+.sec-h h2{font-family:var(--serif);font-size:23px;line-height:1.35;color:var(--ink);margin:0;font-weight:600}
+.sec-en{grid-column:2;font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;margin-top:2px}
+/* 正文与章节标题同一左轨 */
+section>*:not(.sec-h){margin-left:74px}
+.lead{max-width:74ch;margin:14px 0 4px;color:#B9C7D3;font-size:13.8px}
+p{margin:10px 0;max-width:76ch}
+h3{font-family:var(--sans);font-size:14.5px;font-weight:600;color:var(--ink);margin:26px 0 6px}
+h3 .k{font-family:var(--mono);font-size:9.5px;color:var(--accent);margin-right:8px;letter-spacing:.05em;font-weight:400}
+strong{color:#EAF0F5;font-weight:600}
+.note{border-left:2px solid var(--accent-d);background:rgba(216,160,90,.05);padding:10px 13px;margin:16px 0;font-size:12.2px;line-height:1.8;color:#A9B8C5;max-width:78ch}
+.note b{color:#D8B06E}
+ul,ol{margin:8px 0 14px;padding-left:20px;max-width:78ch}
+li{margin:4px 0;line-height:1.8}
+li b{color:var(--ink);font-weight:600}
+
+/* ---- 表格 ---- */
+.tw{overflow-x:auto;margin:14px 0 8px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:12.4px;line-height:1.62;color:#C4D1DC}
+th,td{border-bottom:1px solid var(--line);padding:7px 9px;vertical-align:top;text-align:left}
+th{font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:.06em;color:#8FA3B2;border-bottom:1px solid var(--line2);background:rgba(255,255,255,.018);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.id{font-family:var(--mono);font-size:10.5px;color:var(--accent);white-space:nowrap}
+td.k,th.k{color:#DFE8EF;font-weight:600;white-space:nowrap}
+td.c,th.c{text-align:center}
+td.n,td.num{font-family:var(--mono);font-size:11px;white-space:nowrap;color:#D6E2EC}
+tfoot td{font-size:11px;color:var(--muted);background:rgba(255,255,255,.015)}
+.w-l{min-width:760px}.w-m{min-width:600px}.w-s{min-width:460px}
+.tg{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;padding:1px 6px;border:1px solid var(--line2);color:#9FB2C1;white-space:nowrap}
+.tg.a{border-color:rgba(216,160,90,.5);color:#D8A05A}
+.tg.r{border-color:rgba(214,120,100,.5);color:#D88A78}
+.tg.c{border-color:rgba(95,168,168,.45);color:#5FA8A8}
+
+/* ---- 分层控制框图（CSS 静态图） ---- */
+.bd{border:1px solid var(--line);background:rgba(255,255,255,.015);padding:16px 14px 12px;margin:16px 0 12px}
+.bd-t{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;color:var(--dim);text-align:center;margin-bottom:12px}
+.bd-r{display:grid;grid-template-columns:70px repeat(3,minmax(0,1fr));gap:7px;align-items:stretch}
+.bd-l{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.05em;display:flex;align-items:center}
+.bd-b{border:1px solid #4E6A82;background:#0E1C28;padding:8px 9px;font-size:11.6px;line-height:1.5;color:#DCE6EE;text-align:center}
+.bd-b.ac{border-color:rgba(216,160,90,.6);color:#EBCB9C;background:#171E28}
+.bd-a{grid-column:2/-1;text-align:center;padding:3px 0;font-family:var(--mono);font-size:9px;color:#7C93A6;letter-spacing:.03em}
+.bd-fb{margin-top:10px;border-top:1px dashed var(--line2);padding-top:8px;font-family:var(--mono);font-size:9.5px;color:#8FA2B2;letter-spacing:.02em;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* ---- 权力—利益矩阵 ---- */
+.m2{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);margin:14px 0 8px}
+.m2>div{padding:11px 13px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:11.8px;line-height:1.7;color:#B6C5D2}
+.m2>div:nth-child(2n){border-right:0}
+.m2>div:nth-last-child(-n+2){border-bottom:0}
+.m2 .q{font-family:var(--mono);font-size:9px;letter-spacing:.05em;color:var(--accent);display:block;margin-bottom:4px}
+.m2 .w{color:#E7EEF4;font-weight:600;margin-bottom:4px;display:block;font-size:12px}
+.figrow{display:grid;grid-template-columns:minmax(0,1fr) 252px;gap:16px;align-items:start;margin:16px 0 10px}
+.figleg{border:1px solid var(--line);padding:12px 13px;font-size:12px;line-height:1.75;color:#A9B8C5}
+.figleg .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;color:var(--dim);margin-bottom:8px}
+.figleg dl{margin:0}
+.figleg dt{font-family:var(--mono);font-size:10px;color:var(--accent);margin-top:8px;letter-spacing:.04em}
+.figleg dd{margin:2px 0 0;font-size:11.6px;color:#A9B8C5}
+@media(max-width:900px){.figrow{grid-template-columns:1fr}}
+.fig{margin:16px 0 10px;border:1px solid var(--line);background:rgba(255,255,255,.015);padding:14px 10px 8px;overflow-x:auto}
+.figrow .fig{margin:0}
+.fig .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;color:var(--dim);text-align:center;margin-bottom:10px}
+.mermaid{min-width:680px;text-align:center}
+.mermaid svg{max-width:100%;height:auto}
+.fig .fb{display:none;margin-top:8px;font-size:11.5px;color:#C9A469;border-top:1px solid var(--line);padding-top:8px}
+
+/* ---- 页脚 ---- */
+.ft{max-width:var(--max);margin:36px auto 0;border-top:1px solid var(--line);padding:16px 24px 46px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.04em}
+
+@media(max-width:760px){
+  .top-in{height:auto;flex-wrap:wrap;padding:8px 16px 0;gap:0}
+  .brand{padding:4px 0 6px}
+  .nav{width:100%;margin-left:0}
+  .nav a{padding:8px 8px 9px;font-size:11px}
+  .hero{min-height:290px}
+  .hero-in{padding:66px 16px 24px}
+  .hero h1{font-size:24px}
+  .hero .sub{font-size:13px}
+  .wrap{padding:0 16px}
+  section{padding:34px 0 6px}
+  .sec-h{grid-template-columns:48px 1fr}
+  .sec-n{font-size:24px}
+  .sec-h h2{font-size:19px}
+  section>*:not(.sec-h){margin-left:46px}
+  body{font-size:13.6px}
+  table{font-size:11.6px}
+  th,td{padding:6px 7px}
+  .w-l,.w-m,.w-s{min-width:560px}
+  .mermaid{min-width:520px}
+  .bd-r{grid-template-columns:42px 1fr;gap:5px}
+  .bd-r>.bd-b{grid-column:2/-1!important}
+  .bd-b{padding:6px 8px;font-size:11.4px}
+  .m2{grid-template-columns:1fr}
+  .m2>div{border-right:0}
+  .m2>div:nth-last-child(-n+2){border-bottom:1px solid var(--line)}
+  .m2>div:last-child{border-bottom:0}
+}
+
+</style>
+</head>
+<body id="top">
+<header class="top">
+  <div class="top-in">
+    <div class="brand">SE<em>/</em> 小组作业 04 <s></s> 场景与风险</div>
+    <nav class="nav" aria-label="章节导航">
+      <a href="#s1"><i>01</i>背景</a>
+      <a href="#s2"><i>02</i>场景分层</a>
+      <a href="#s3"><i>03</i>运行设计条件</a>
+      <a href="#s4"><i>04</i>典型场景</a>
+      <a href="#s5"><i>05</i>风险分析</a>
+      <a href="#s6"><i>06</i>小结</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-in">
+    <div class="kick">SYSTEMS ENGINEERING <span>/</span> SCENARIO-BASED ANALYSIS</div>
+    <h1>真空管道洲际运输系统<em>场景分层 · 运行设计条件 · 风险分析</em></h1>
+    <p class="sub">把运行环境拆成可描述的六层场景，据此划定正常运行的设计条件，再沿一条典型客运场景逐阶段识别风险。</p>
+    <div class="meta"><span>对象 VPTS 跨洲干线客运</span><span>依据 场景分层 · ODC · 三级风险</span><span>口径 参数为示例取值（作业推演）</span><span>版本 0.3 / 2026-11-27</span></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section id="s1" class="first">
+  <div class="sec-h"><span class="sec-n">01</span><h2>作业说明与系统背景</h2><span class="sec-en">BACKGROUND</span></div>
+  <p>本次只做一件事：把所选系统的运行环境拆成可描述的场景，据此划定正常运行的设计条件，再沿一条典型客运场景识别风险场景。需求规格与架构已在作业 3 完成，本次不重复。</p>
+
+  <h3><span class="k">1.1</span>系统目的与范围</h3>
+  <p>系统在机场、港口、铁路三种洲际通道渐近饱和的背景下提供第四条骨干通道。它以真空环境消除空气阻力、以磁浮导向消除轮轨摩擦，把跨洲运输的时间成本压到小时级。管廊同时作为能源输配、科研实验与轨道延伸的共用骨架。</p>
+  <p>范围限于站间高速客运、夜间货运与预约时段的真空实验环境。站内商业、城市接驳与轨道延伸段不在本期范围内。</p>
+
+  <h3><span class="k">1.2</span>组织、外部接口与内部要素</h3>
+  <div class="tw">
+    <table class="w-m">
+      <thead><tr><th style="width:22%">类别</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td class="k">三层组织</td><td>大洲运营商（投资与商业目标）— 跨洲管委会（多法域许可、关税、应急责任）— 站点运营单元（站内服务与值守）</td></tr>
+        <tr><td class="k">外部接口</td><td>外部电网、海关边检、既有交通方式、科研机构；事故时增加消防与救援机构</td></tr>
+        <tr><td class="k">内部要素</td><td>管段、泵组、隔离闸门、运输舱体、调度中心</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><span class="k">1.3</span>四类用户</h3>
+  <div class="tw">
+    <table class="w-l">
+      <thead><tr><th style="width:13%">用户</th><th style="width:23%">使用方式</th><th style="width:30%">能力与限制</th><th>对场景设定的影响</th></tr></thead>
+      <tbody>
+        <tr><td class="k">乘客</td><td>一次性使用，日间客运</td><td>无专业培训基础，跨语言，携带行李，可能行动不便</td><td>登乘、疏散、异常提示不能依赖专业判断</td></tr>
+        <tr><td class="k">运维人员</td><td>日常值守与计划检修</td><td>具备隔离、挂牌与检修权限，熟悉管路与泵组</td><td>检修封锁、人员进入管段属于合法临时限制</td></tr>
+        <tr><td class="k">调度员</td><td>连续值班，全局调度</td><td>掌握全线态势，具备降级处置判断能力</td><td>降级与应急的判断入口，ODC 中单列人员状态</td></tr>
+        <tr><td class="k">科研用户</td><td>预约制，科研窗口</td><td>对真空度、振动、电磁指标高度敏感</td><td>科研窗口是独立场景，不与客运混排</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">术语沿用课件：功能场景、逻辑场景、具体场景；场景要素六层；ODD（外部运行范围）与 ODC（设计运行条件，含车辆/系统状态、人员状态及其他必要条件）。本组把“车辆状态”对应为“系统状态”。</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2">
+  <div class="sec-h"><span class="sec-n">02</span><h2>场景分层</h2><span class="sec-en">SCENARIO LAYERS</span></div>
+  <p>课件按道路场景给出六层。本组按“管廊—轨道”类系统改写层名，保留分层逻辑：从固定几何，到标识与临时改动，到动态参与者，再到环境与信息条件。</p>
+
+  <div class="tw">
+    <table class="w-l">
+      <thead><tr><th style="width:6%">序</th><th style="width:16%">层名</th><th style="width:34%">映射到管道系统的含义</th><th>具体场景要素（取值见第 3、4 节）</th></tr></thead>
+      <tbody>
+        <tr><td class="c num">L1</td><td class="k">拓扑层</td><td>管廊的几何与连接关系：干线分段、站点位置、泵站间距、旁通与联络管、进出站线路</td><td>段号与长度、纵坡、曲线半径、泵站编号与间距、站点编号、单向或双向运行</td></tr>
+        <tr><td class="c num">L2</td><td class="k">结构/标识层</td><td>固定设施与标识：管径、闸门位置、隔离段编号、限速与限压标识、站台门编号、疏散通道与集合点</td><td>管内径、舱体外径、悬浮间隙、闸门道数、限压值、站台门编号、疏散口位置、警示标识</td></tr>
+        <tr><td class="c num">L3</td><td class="k">临时限制层</td><td>计划或临时改变运行条件的状态：检修封锁、降级限速、破真空作业、施工占用、临时关闭的闸门、临时禁入区</td><td>封锁段与时段、降级限速值、破真空范围、检修人员进入许可、临时禁入区边界</td></tr>
+        <tr><td class="c num">L4</td><td class="k">动态参与者层</td><td>与舱体共享管廊与站点的活动主体：在途舱体、站内旅客、装卸车辆、检修人员、救援舱、巡检无人机</td><td>舱体数量与间隔、载员、站台人数密度、装卸车辆台数、检修人员人数、救援舱位置</td></tr>
+        <tr><td class="c num">L5</td><td class="k">环境层</td><td>外部自然与气象条件，以及影响运行的跨境状态：气温、风、降水、地震、冻土融沉、雷暴、电磁干扰、口岸开放状态</td><td>气温区间、风速、降水量、地震烈度与加速度阈值、冻土类型、雷暴日数、口岸开关状态</td></tr>
+        <tr><td class="c num">L6</td><td class="k">数字信息层</td><td>支撑运行的信息与通信条件：SCADA 链路、时间同步、舱单与名单、海关放行、科研窗口预约、卫星备份、网络攻击态势</td><td>链路时延与中断时长、授时偏差、舱单完整率、放行状态、实验窗口编号、备份链路可用性</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">分层只用于拆解，不用于给场景排优先级。同一场景通常同时涉及 4—5 层，例如“巡航中失真空”落在 L2（结构）、L5（外部扰动）与 L6（报警链路）三层。</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3">
+  <div class="sec-h"><span class="sec-n">03</span><h2>运行设计条件 ODC</h2><span class="sec-en">OPERATIONAL DESIGN CONDITION</span></div>
+  <p>ODC 是“系统可以正常运行”的全部条件的集合。本组按 ODD（外部环境）+ 系统状态 + 人员状态三块整理，三者任一越界即退出正常运行。</p>
+
+  <h3><span class="k">3.1</span>ODD 外部运行范围</h3>
+  <p>先给边界，再谈场景。下表是本组认为必须事先写清的十一条外部边界，超出任一条即不承诺正常运行。</p>
+  <div class="tw">
+    <table class="w-l">
+      <thead><tr><th style="width:5%">#</th><th style="width:14%">维度</th><th style="width:30%">边界条件</th><th>边界越界后的处理</th></tr></thead>
+      <tbody>
+        <tr><td class="c num">1</td><td class="k">线路与地形</td><td>干线长度 [3,000, 6,000] km；纵坡 ≤3%；最小曲线半径按 1,500 km/h 校核；海拔 ≤2,500 m</td><td>超出则重新核定速度包络，不沿用本 ODD</td></tr>
+        <tr><td class="c num">2</td><td class="k">管径与舱体</td><td>管内径 [3.0, 3.4] m；舱体外径 [2.2, 2.6] m；悬浮间隙 [8, 14] mm</td><td>间隙越界按临险处理，降速并切备份</td></tr>
+        <tr><td class="c num">3</td><td class="k">管内压力</td><td>正常工作 [1, 10] Pa；预警 30 Pa；隔离 50 Pa；正常漏率 [0.05, 0.2] Pa/h</td><td>达 30 Pa 限流，达 50 Pa 停发并隔离</td></tr>
+        <tr><td class="c num">4</td><td class="k">气温</td><td>本底气温 [−40, +50] °C；日温差 ≤30 °C</td><td>超限降载或停运，站内加强环控</td></tr>
+        <tr><td class="c num">5</td><td class="k">风与降水</td><td>风速 ≤12 级（≤36.9 m/s）；降水按百年一遇校核</td><td>超限停止站台作业，检查排水与覆土</td></tr>
+        <tr><td class="c num">6</td><td class="k">地震</td><td>设防 ≤VIII 度；停发触发阈值 [0.03, 0.08] g</td><td>触发即停发、隔离受影响段</td></tr>
+        <tr><td class="c num">7</td><td class="k">腐蚀与冻土</td><td>腐蚀等级 ≤C4；冻土区按融沉监测布点</td><td>超限进入检修降级，缩短巡检周期</td></tr>
+        <tr><td class="c num">8</td><td class="k">外部电网</td><td>双回路接入；可用容量 ≥400 MW；电压偏差 ±7%</td><td>单回路失电切另一路；双回路失电按应急</td></tr>
+        <tr><td class="c num">9</td><td class="k">通信与授时</td><td>光纤主链路时延 ≤100 ms；卫星备份；授时偏差 ≤1 ms；中断 ≤30 min 可降级</td><td>中断超 30 min 停止新舱发车</td></tr>
+        <tr><td class="c num">10</td><td class="k">口岸状态</td><td>三个及以上法域口岸开放；单次联合查验 ≤90 min</td><td>口岸关闭即停发跨境舱体，按预案安置</td></tr>
+        <tr><td class="c num">11</td><td class="k">运营时段</td><td>客运 [06:00, 23:00]；货运 [23:00, 05:00]；科研窗口按预约</td><td>跨时段运行需提前切换模式并复核</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><span class="k">3.2</span>系统状态清单</h3>
+  <p>系统状态按“是否允许载客、是否允许发车”两条线判断，避免把停靠与降级混为一谈。</p>
+  <div class="tw">
+    <table class="w-l">
+      <thead><tr><th style="width:8%">状态</th><th style="width:16%">名称</th><th style="width:32%">定义 / 进入条件</th><th style="width:12%">可载客</th><th>可发车</th></tr></thead>
+      <tbody>
+        <tr><td class="id">SS-1</td><td class="k">待发</td><td>舱体停靠、站台门闭合、管内已达工作压力、联锁自检通过</td><td class="c">可（空舱）</td><td class="c">否，待登乘</td></tr>
+        <tr><td class="id">SS-2</td><td class="k">登乘与密封</td><td>旅客完成值机与安检，舱门、站台门对位并密封</td><td class="c">可</td><td class="c">否，待抽真空</td></tr>
+        <tr><td class="id">SS-3</td><td class="k">抽真空</td><td>登乘区独立抽气，压力由常压降至发车限值</td><td class="c">可（闭舱）</td><td class="c">否，压力未达标</td></tr>
+        <tr><td class="id">SS-4</td><td class="k">加速</td><td>联锁许可、区段清空、追踪间隔满足</td><td class="c">可</td><td class="c">是</td></tr>
+        <tr><td class="id">SS-5</td><td class="k">巡航</td><td>速度进入 [1,100, 1,300] km/h 包络，压力与振动在限</td><td class="c">可</td><td class="c">—</td></tr>
+        <tr><td class="id">SS-6</td><td class="k">减速</td><td>进入目标站前减速区，制动与悬浮状态正常</td><td class="c">可</td><td class="c">—</td></tr>
+        <tr><td class="id">SS-7</td><td class="k">到站泄压</td><td>停稳后对登乘区补气至常压，压力回升速率受控</td><td class="c">可</td><td class="c">否</td></tr>
+        <tr><td class="id">SS-8</td><td class="k">检修隔离</td><td>区段封锁、挂牌、破真空或维持真空待入</td><td class="c">否</td><td class="c">否</td></tr>
+        <tr><td class="id">SS-9</td><td class="k">降级运行</td><td>单泵站失效、单区段限速或减班，联锁完整</td><td class="c">可（限流）</td><td class="c">是，需调度确认</td></tr>
+        <tr><td class="id">SS-10</td><td class="k">应急</td><td>泄漏、火灾、地震、入侵任一触发</td><td class="c">否</td><td class="c">否，仅允许救援舱</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><span class="k">3.3</span>四类人员状态与权限</h3>
+  <p>人员状态既影响准入，也影响系统响应的选择。“可自主行动”是本组对乘客状态的简化判定，用于决定疏散路径是否可走常规流程。</p>
+  <div class="tw">
+    <table class="w-l">
+      <thead><tr><th style="width:12%">人员</th><th style="width:30%">正常运行时的状态</th><th style="width:28%">权限</th><th>不满足时的处理</th></tr></thead>
+      <tbody>
+        <tr><td class="k">乘客</td><td>已完成值机与安检，座位固定，随身行李符合尺寸；能自主行动，未处于醉酒或需协助未申报状态</td><td>仅使用旅客界面；不接触任何运行控制</td><td>拒绝登舱或改由站务陪同，不进入登乘区</td></tr>
+        <tr><td class="k">运维人员</td><td>在岗值守或按工单检修；进入管段前完成气体检测与两人同行</td><td>分区隔离、挂牌上锁、检修与恢复确认</td><td>无工单或无监护不得进入；越权记入审计</td></tr>
+        <tr><td class="k">调度员</td><td>值班 2 人 +1 人备岗；连续值守 ≤8 h，交接 ≥10 min；能读取全局态势</td><td>模式切换、降级处置、停发与恢复</td><td>疲劳或交接未完成时，由备岗接管，不得单人处置事故</td></tr>
+        <tr><td class="k">科研用户</td><td>预约确认、实验清单与设备清单审核通过；进入前完成安全告知</td><td>只读实验接口与数据导出，不得操作运输控制</td><td>清单不符即延期；擅自操作按入侵处理</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">本组认为 ODC 中最难判定的是“地震阈值 [0.03, 0.08] g”这一项。阈值偏低会频繁误停发，偏高则可能在错位后才动作，需要结合沿线断层资料与结构响应另做专题分析。</p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4">
+  <div class="sec-h"><span class="sec-n">04</span><h2>典型场景：日间客运跨洲巡航</h2><span class="sec-en">REPRESENTATIVE SCENARIO</span></div>
+  <p>选这一条作为典型场景，因为它是系统的商业主体，覆盖全部六个阶段，也能带出真空、追踪、制动与开闸四类主要风险。以下按“功能场景 → 逻辑场景 → 具体场景”三层展开。</p>
+
+  <h3><span class="k">4.1</span>功能场景（自然语言，不含物理量值）</h3>
+  <p>旅客在起点站完成值机与安检，进入登乘区候舱。舱体对位后开舱门，旅客登舱并固定行李，舱门与站台门依次密封。</p>
+  <p>登乘区独立抽真空，达到发车条件后舱体解钩、加速离站；单段长距离管内巡航，途中保持与前舱的安全间隔。</p>
+  <p>接近终点站减速，停稳后对登乘区补气泄压；压力回到常压后开闸、开舱门，旅客下舱并交付行李。</p>
+  <div class="tw">
+    <table class="w-l">
+      <thead><tr><th style="width:6%">阶段</th><th style="width:13%">名称</th><th style="width:39%">系统与人员的动作</th><th>阶段完成标志</th></tr></thead>
+      <tbody>
+        <tr><td class="c num">P1</td><td class="k">登舱密封</td><td>值机、安检、进站台、登舱、行李固定；舱门与站台门对位后依次密封</td><td>两门密封信号到位，登乘区封闭</td></tr>
+        <tr><td class="c num">P2</td><td class="k">抽真空</td><td>登乘区独立抽气，泵组按程序升速，压力与漏率连续监测</td><td>压力进入发车包络并保压</td></tr>
+        <tr><td class="c num">P3</td><td class="k">加速</td><td>联锁校验、区段清空确认、舱体解钩、牵引按速度曲线输出</td><td>速度达到巡航下限，加速段结束</td></tr>
+        <tr><td class="c num">P4</td><td class="k">巡航</td><td>速度与悬浮间隙闭环，追踪间隔保持，压力与振动监测</td><td>进入目标站减速区</td></tr>
+        <tr><td class="c num">P5</td><td class="k">减速</td><td>按曲线施加常用制动，悬浮与导向保持，停靠点对位</td><td>停稳并对位在允许偏差内</td></tr>
+        <tr><td class="c num">P6</td><td class="k">到站泄压开闸</td><td>登乘区补气至常压，压力回升受控；确认停稳后开闸、开舱门</td><td>压力回常压，闸门与舱门开启，旅客下舱</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><span class="k">4.2</span>逻辑场景（参数取范围）</h3>
+  <p>下表只列会影响安全判断的参数。区间形式统一写作 [下限, 上限]，单位写在表头，避免文字里再重复。</p>
+  <div class="tw">
+    <table class="w-m">
+      <thead><tr><th style="width:6%">阶段</th><th style="width:28%">参数</th><th style="width:16%">单位</th><th style="width:22%">取值区间</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td class="c num">全程</td><td>干线长度 L</td><td class="num">km</td><td class="num">[3,000, 6,000]</td><td>示例走廊量级，不对应真实线路</td></tr>
+        <tr><td class="c num">P1</td><td>旅客登舱时间</td><td class="num">min</td><td class="num">[15, 25]</td><td>200 人量级，含行李固定</td></tr>
+        <tr><td class="c num">P1</td><td>舱门与站台门对位偏差</td><td class="num">mm</td><td class="num">[0, 10]</td><td>超 10 mm 不得密封</td></tr>
+        <tr><td class="c num">P2</td><td>抽真空时间</td><td class="num">min</td><td class="num">[25, 45]</td><td>随登乘区容积与泵组配置变化</td></tr>
+        <tr><td class="c num">P2</td><td>发车压力上限</td><td class="num">Pa</td><td class="num">[1, 10]</td><td>越低越安全，抽气时间越长</td></tr>
+        <tr><td class="c num">P3</td><td>加速时间</td><td class="num">s</td><td class="num">[180, 260]</td><td>0 至巡航速度</td></tr>
+        <tr><td class="c num">P3</td><td>加速纵向加速度</td><td class="num">g</td><td class="num">[0.10, 0.15]</td><td>上限受乘客舒适度约束</td></tr>
+        <tr><td class="c num">P4</td><td>巡航速度</td><td class="num">km/h</td><td class="num">[1,100, 1,300]</td><td>峰值 1,500 仅限 ≤2 h</td></tr>
+        <tr><td class="c num">P4</td><td>同段追踪间隔</td><td class="num">min</td><td class="num">[6, 12]</td><td>须大于当前速度下制动时间</td></tr>
+        <tr><td class="c num">P4</td><td>管内压力波动</td><td class="num">Pa</td><td class="num">[1, 10]</td><td>超 30 Pa 进入预警</td></tr>
+        <tr><td class="c num">P4</td><td>舱内噪声</td><td class="num">dB(A)</td><td class="num">[55, 65]</td><td>客舱区域</td></tr>
+        <tr><td class="c num">P5</td><td>减速时间</td><td class="num">s</td><td class="num">[200, 280]</td><td>常用制动，非紧急制动</td></tr>
+        <tr><td class="c num">P5</td><td>停靠点纵向偏差</td><td class="num">m</td><td class="num">[0, 0.5]</td><td>超限禁止开舱门</td></tr>
+        <tr><td class="c num">P6</td><td>泄压时间</td><td class="num">min</td><td class="num">[8, 15]</td><td>常压恢复，速率受控</td></tr>
+        <tr><td class="c num">P6</td><td>站台停靠时间</td><td class="num">min</td><td class="num">[12, 20]</td><td>含下舱、清洁与再登乘准备</td></tr>
+        <tr><td class="c num">全程</td><td>单程总时长</td><td class="num">h</td><td class="num">[4.2, 5.4]</td><td>含加速、巡航、减速与一次停靠</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><span class="k">4.3</span>具体场景（一组固定取值）</h3>
+  <p>取区间内的一组值固定下来，作为讨论与试验的基准实例。所有数值为示例取值（作业推演）。</p>
+  <div class="tw">
+    <table class="w-m">
+      <thead><tr><th style="width:34%">参数</th><th style="width:22%">示例取值</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td class="k">干线长度</td><td class="num">4,680 km</td><td>起点站至终点站，中途不停靠</td></tr>
+        <tr><td class="k">载员 / 舱体</td><td class="num">198 人 / 1 舱</td><td>额定 200 人，留 2 席作调换</td></tr>
+        <tr><td class="k">旅客登舱</td><td class="num">21 min</td><td>两批登舱，批间隔 6 min</td></tr>
+        <tr><td class="k">门对位偏差</td><td class="num">3 mm</td><td>在允许范围内</td></tr>
+        <tr><td class="k">抽真空</td><td class="num">32 min / 6 Pa</td><td>由常压降至 6 Pa 后保压 5 min</td></tr>
+        <tr><td class="k">加速</td><td class="num">227 s / 0.145 g</td><td>至 1,200 km/h，加速段约 38 km</td></tr>
+        <tr><td class="k">巡航</td><td class="num">1,200 km/h / 4,604 km</td><td>约 3.84 h，压力稳定在 4—6 Pa</td></tr>
+        <tr><td class="k">追踪间隔</td><td class="num">8 min</td><td>前舱已越出两个区段</td></tr>
+        <tr><td class="k">减速</td><td class="num">227 s / 0.145 g</td><td>制动段约 38 km，停靠偏差 0.2 m</td></tr>
+        <tr><td class="k">泄压</td><td class="num">11 min</td><td>补气至常压，回升速率 ≤3 kPa/s</td></tr>
+        <tr><td class="k">停靠</td><td class="num">16 min</td><td>下舱 198 人，行李交付并行</td></tr>
+        <tr><td class="k">单程总时长</td><td class="num">4.2 h</td><td>3.84 h 巡航 + 7.6 min 加减速 + 16 min 停靠</td></tr>
+        <tr><td class="k">舱内温度</td><td class="num">21 °C</td><td>区间 [18, 24] °C</td></tr>
+        <tr><td class="k">舱内噪声</td><td class="num">58 dB(A)</td><td>巡航段实测目标</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="fig">
+    <div class="cap">图 1　日间客运场景的六个阶段与对应的风险节点</div>
+    <pre class="mermaid">
+flowchart TB
+  P1["① 登舱密封"] --> P2["② 抽真空"] --> P3["③ 加速"] --> P4["④ 巡航"] --> P5["⑤ 减速"] --> P6["⑥ 到站泄压开闸"]
+  P1 -.-> RA["RS-01 · RS-04"]
+  P2 -.-> RB["RS-02 · RS-03"]
+  P3 -.-> RC["RS-05 · RS-06"]
+  P4 -.-> RD["RS-07 · RS-08 · RS-09 · RS-10 · RS-14"]
+  P5 -.-> RE["RS-11"]
+  P6 -.-> RF["RS-12 · RS-13"]
+  classDef p fill:#0E1C28,stroke:#5C7891,color:#DCE6EE
+  classDef r fill:#0E1C28,stroke:#8A97A4,color:#C6D3DE,stroke-dasharray:4 3
+  class P1,P2,P3,P4,P5,P6 p
+  class RA,RB,RC,RD,RE,RF r
+    </pre>
+    <div class="fb">框图需要联网加载 Mermaid。未渲染时请刷新页面，或查看源码中的 flowchart 定义。</div>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5">
+  <div class="sec-h"><span class="sec-n">05</span><h2>安全风险分析</h2><span class="sec-en">RISK SCENARIOS</span></div>
+  <p>风险沿第 4 节的时序逐阶段识别，不停留在“系统可能出故障”这一层。每条都写清在哪个节点、由什么触发、系统怎么响应，再按三级场景定级。</p>
+
+  <h3><span class="k">5.1</span>三级场景的判据</h3>
+  <div class="tw">
+    <table class="w-s">
+      <thead><tr><th style="width:16%">等级</th><th style="width:34%">判据</th><th>处理方式</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tg">正常</span></td><td>系统在 ODC 内运行，仅需常规调整，无人员伤害与结构损伤</td><td>按运行规程处理，记录但不升级</td></tr>
+        <tr><td><span class="tg a">临险</span></td><td>已逼近安全边界，需要降速、限流、隔离或人工接管，尚未造成后果</td><td>调度确认后降级，事后复盘触发原因</td></tr>
+        <tr><td><span class="tg r">事故</span></td><td>已造成人员伤害、结构损伤或被迫停运，或后果无法在系统内消除</td><td>联锁自动动作，启动应急与外部通报</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><span class="k">5.2</span>风险场景列表</h3>
+  <div class="tw">
+    <table class="rt">
+      <thead><tr><th style="width:7%">编号</th><th style="width:9%">风险节点</th><th style="width:22%">触发条件</th><th style="width:16%">现象</th><th style="width:15%">影响</th><th>系统响应</th><th style="width:7%">等级</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="id">RS-01</td><td>P1 登舱密封</td>
+          <td>舱门与站台门对位偏差 &gt;10 mm，或密封圈夹入异物</td>
+          <td>密封信号不到位，抽气前已出现微小压差</td>
+          <td>抽真空失败，旅客长时间滞留舱内</td>
+          <td>禁止抽气，退位重对，舱门复检并记录</td>
+          <td><span class="tg a">临险</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-02</td><td>P2 抽真空</td>
+          <td>泵组抽速不足、阀门卡涩，或漏率超过 0.2 Pa/h</td>
+          <td>压力下降缓慢，32 min 后仍高于 10 Pa</td>
+          <td>发车延误，占用站台影响后续班次</td>
+          <td>延长抽气或切备泵；二次不达标取消班次并转舱</td>
+          <td><span class="tg a">临险</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-03</td><td>P2 抽真空</td>
+          <td>登乘区已开始抽气，检修人员或站务误入</td>
+          <td>门禁报警，区域内氧含量与压力异常</td>
+          <td>低压缺氧，人员伤害</td>
+          <td>立即破真空、中止抽气，启动救援并封锁区域</td>
+          <td><span class="tg r">事故</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-04</td><td>P1 登舱</td>
+          <td>高峰班次客流集中，站台人数超过设计密度</td>
+          <td>站台拥挤，登舱排队溢出到换乘通道</td>
+          <td>登舱延长、秩序混乱，挤压风险上升</td>
+          <td>限流、增开登舱口、延后发车，广播分流</td>
+          <td><span class="tg">正常</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-05</td><td>P3 加速</td>
+          <td>牵引过流、悬浮间隙越限或导向失稳</td>
+          <td>舱体振动与噪声突增，加速度偏离曲线</td>
+          <td>乘客不适，结构受交变载荷</td>
+          <td>限流或切备份悬浮，未恢复则中断加速并回站</td>
+          <td><span class="tg a">临险</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-06</td><td>P3 加速</td>
+          <td>区段占用误判，或前舱未按计划越出区段</td>
+          <td>追踪间隔小于 6 min 当量，联锁预检不通过</td>
+          <td>两舱同段高速运行，追尾风险</td>
+          <td>拒绝发车，已发车者减速并退出加速段</td>
+          <td><span class="tg r">事故</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-07</td><td>P4 巡航</td>
+          <td>管段泄漏、密封失效，或第三方挖掘破坏</td>
+          <td>压力 3 s 内上升超 5 Pa，局部气流噪声明显</td>
+          <td>高速舱体气动冲击，紧急制动，乘客恐慌</td>
+          <td>停发、关闭相邻闸门、舱体紧急制动，隔离故障段</td>
+          <td><span class="tg r">事故</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-08</td><td>P4 巡航</td>
+          <td>泵站失电或泵组失效，备用电源未及时投入</td>
+          <td>段内压力缓慢上升，抽速下降</td>
+          <td>长时停运后需重新抽气，班次连锁延误</td>
+          <td>切备电与备泵，限流运行；持续上升则按 RS-07 处置</td>
+          <td><span class="tg a">临险</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-09</td><td>P4 巡航</td>
+          <td>地震加速度超过 [0.03, 0.08] g，或管段错位、基础下沉</td>
+          <td>震动信号触发，段内压力与几何同时异常</td>
+          <td>失真空、线路中断、救援通道受阻</td>
+          <td>全线停发、隔离受影响段，救援舱待命，外部通报</td>
+          <td><span class="tg r">事故</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-10</td><td>P4 巡航</td>
+          <td>光纤中断且卫星链路受遮挡，SCADA 中断超过 30 min</td>
+          <td>遥测丢失、指令超时，调度画面冻结</td>
+          <td>失去全局态势，退化为区域手动</td>
+          <td>停止新舱发车，区域按本地联锁运行，恢复后对账</td>
+          <td><span class="tg a">临险</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-11</td><td>P5 减速</td>
+          <td>制动能力下降、制动指令延迟，或制动距离计算偏差</td>
+          <td>减速度低于曲线，停靠点偏差增大</td>
+          <td>冲出停靠点，舱门无法与站台门对位</td>
+          <td>切备用制动与磁轨制动，联锁禁止开舱门，救援舱牵引</td>
+          <td><span class="tg r">事故</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-12</td><td>P6 到站泄压</td>
+          <td>补气阀开度过大，或泄压程序与舱门解锁未互锁</td>
+          <td>压力回升速率超过 3 kPa/s，舱内有压力冲击感</td>
+          <td>舱体与闸门承受冲击载荷，密封圈受损</td>
+          <td>限速补气、暂停开闸，检查密封后再开舱门</td>
+          <td><span class="tg a">临险</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-13</td><td>P6 开闸</td>
+          <td>开闸与开舱门顺序错误，或站台未清空即开闸</td>
+          <td>舱门先于闸门开启，站台边缘人员聚集</td>
+          <td>人员跌落、夹伤</td>
+          <td>联锁闭锁，强制按“停稳—泄压—开闸—开舱门”顺序执行</td>
+          <td><span class="tg r">事故</span></td>
+        </tr>
+        <tr>
+          <td class="id">RS-14</td><td>P4 巡航</td>
+          <td>单台泵切备、压力在 [1, 10] Pa 内小幅波动</td>
+          <td>压力曲线短时抖动，未触及 30 Pa</td>
+          <td>无实质影响</td>
+          <td>自动切备并记录，不改变班次</td>
+          <td><span class="tg">正常</span></td>
+        </tr>
+      </tbody>
+      <tfoot><tr><td colspan="7">合计 14 条：正常 2 条、临险 6 条、事故 6 条。定级为本组讨论结果，未经定量风险评估校准。</td></tr></tfoot>
+    </table>
+  </div>
+
+  <h3><span class="k">5.3</span>从风险列表到 ODD 的反馈</h3>
+  <p>列表里有四条直接反写了第 3 节的边界，这是本组认为场景分析最有用的一步。</p>
+  <div class="tw">
+    <table class="w-m">
+      <thead><tr><th style="width:10%">风险</th><th style="width:38%">反写的 ODC 条件</th><th>调整方向</th></tr></thead>
+      <tbody>
+        <tr><td class="id">RS-07</td><td>压力上升速率成为独立边界，不再只看绝对值</td><td>增加“3 s 上升 &gt;5 Pa 即停发”的触发条件</td></tr>
+        <tr><td class="id">RS-10</td><td>通信中断时长是 ODD 的组成部分</td><td>把“中断 ≤30 min”写进外部边界，超时即退出正常运行</td></tr>
+        <tr><td class="id">RS-11</td><td>制动距离与追踪间隔必须同步校核</td><td>速度包络上调时，追踪间隔下限同时上调</td></tr>
+        <tr><td class="id">RS-13</td><td>开闸与开舱门的顺序属于 ODC，不是操作规程细节</td><td>以联锁固化顺序，人员不可越序操作</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6">
+  <div class="sec-h"><span class="sec-n">06</span><h2>小结</h2><span class="sec-en">SUMMARY</span></div>
+  <p>本组对 ODD 边界有三点判断，也明确哪些数字只是讨论用。</p>
+  <ul>
+    <li><b>边界应写“可判定”的条件。</b>压力不能只写“维持真空”，要写清 10 Pa 发车、30 Pa 预警、50 Pa 隔离三条线，否则场景无法定级。</li>
+    <li><b>最难定的是地震与口岸两条。</b>前者在误停与漏判之间没有明显最优区间；后者受政治与行政影响，系统只能设定“关闭即停发”的响应，不能设定关闭的概率。</li>
+    <li><b>ODC 应把人员状态纳入。</b>乘客能否自主行动、调度员是否疲劳、检修是否两人同行，都会改变同一场景的处置路径。</li>
+    <li><b>速度与间隔是耦合的。</b>本组认为不应把 1,200 km/h 与 6 min 间隔分别立项，两者的安全余量必须一起校核。</li>
+  </ul>
+  <p>本文所有区间与取值，包括 4,680 km、1,200 km/h、6 Pa、32 min、8 min 间隔、0.03—0.08 g 阈值，均为示例取值（作业推演），用于演示方法，不作为工程结论。真正的 ODD 需要在可行性研究阶段用实测线路、结构响应与运行数据重新标定。</p>
+</section>
+
+
+</main>
+
+<footer class="ft">
+  <div>系统工程 · 小组作业 04 ｜ 场景分层与运行设计条件 ｜ 单文件 HTML，字体与框图需联网加载</div>
+  <div>2026-11-27</div>
+</footer>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll(".nav a"));
+  var secs = [].slice.call(document.querySelectorAll("section"));
+  function sync(){
+    var y = window.scrollY + 90, cur = secs[0] && secs[0].id;
+    secs.forEach(function(s){ if(s.offsetTop <= y) cur = s.id; });
+    links.forEach(function(a){ a.classList.toggle("on", a.getAttribute("href") === "#" + cur); });
+  }
+  window.addEventListener("scroll", sync, {passive:true}); sync();
+})();
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+mermaid.initialize({
+  startOnLoad:false, securityLevel:"loose", theme:"base",
+  fontFamily:'"Noto Sans SC","PingFang SC",sans-serif',
+  themeVariables:{background:"#0B1722", primaryColor:"#0E1C28", primaryTextColor:"#DCE6EE",
+    primaryBorderColor:"#5C7891", lineColor:"#7C93A6", secondaryColor:"#0E1C28", tertiaryColor:"#0E1C28",
+    fontSize:"13px", edgeLabelBackground:"#0B1722"},
+  flowchart:{curve:"linear", htmlLabels:true, useMaxWidth:true}
+});
+var nodes = [].slice.call(document.querySelectorAll(".mermaid"));
+if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
+for (var i=0;i<nodes.length;i++){
+  try { var r = await mermaid.render("mmd-"+i, nodes[i].textContent.trim()); nodes[i].innerHTML = r.svg; }
+  catch(e){ var fb = nodes[i].parentElement.querySelector(".fb"); if(fb) fb.style.display="block"; }
+}
+</script>
+
+</body>
+</html>
