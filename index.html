@@ -28,7 +28,6 @@
     overflow-x:hidden;
     position:relative;
   }
-  /* 背景光晕 + 工程网格 */
   body::before{
     content:"";position:fixed;inset:0;z-index:-2;
     background:
@@ -47,7 +46,6 @@
   }
   .wrap{max-width:1020px;margin:0 auto;position:relative;}
 
-  /* 顶部标签 */
   .tag{
     display:inline-flex;align-items:center;gap:8px;
     font-size:11.5px;letter-spacing:2.5px;text-transform:uppercase;
@@ -87,7 +85,6 @@
     max-width:660px;
   }
 
-  /* 个人信息 */
   .profile{
     margin-top:28px;
     display:flex;flex-wrap:wrap;gap:12px;
@@ -104,7 +101,6 @@
   }
   .chip b{color:var(--cyan);font-weight:600;}
 
-  /* 管道装饰线 */
   .pipe{
     margin:38px 0 40px;
     height:44px;
@@ -142,12 +138,11 @@
     border:2px solid var(--cyan);
     box-shadow:0 0 12px rgba(56,189,248,.55);
   }
-  .node:nth-child(3){
+  .node:nth-child(4){
     border-color:var(--amber);
     box-shadow:0 0 12px rgba(245,158,11,.5);
   }
 
-  /* 作业区标题 */
   .section-head{
     display:flex;align-items:baseline;justify-content:space-between;
     margin-bottom:20px;
@@ -162,7 +157,6 @@
   }
   .count{font-size:13px;color:var(--muted);}
 
-  /* 卡片网格 */
   .grid{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
@@ -227,38 +221,36 @@
   }
   .btn::after{content:"→";font-size:15px;}
 
-  /* 待更新卡片 */
-  .card.pending{
-    border-style:dashed;
-    border-color:rgba(139,163,184,.28);
-    background:rgba(13,26,40,.45);
+  /* ===== 作业总汇报高亮卡片 ===== */
+  .card.featured{
+    grid-column:1 / -1;
+    border-color:rgba(245,158,11,.32);
+    background:linear-gradient(115deg, rgba(245,158,11,.10), rgba(13,26,40,.82) 42%);
   }
-  .card.pending:hover{
-    transform:translateY(-3px);
-    border-color:rgba(245,158,11,.4);
-    box-shadow:0 20px 40px -28px rgba(245,158,11,.6);
+  .card.featured::before{
+    background:linear-gradient(90deg,transparent,var(--amber),transparent);
+    opacity:1;
   }
-  .card.pending .dot{
-    color:var(--muted);
-    background:rgba(139,163,184,.1);
-    border-color:rgba(139,163,184,.35);
+  .card.featured:hover{
+    border-color:rgba(245,158,11,.6);
+    box-shadow:0 24px 50px -26px rgba(245,158,11,.65);
   }
-  .card.pending .node-num .line{
-    background:linear-gradient(90deg,rgba(139,163,184,.3),transparent);
-  }
-  .badge{
-    align-self:flex-start;
-    display:inline-flex;align-items:center;gap:7px;
-    padding:8px 16px;border-radius:10px;
-    font-size:13px;font-weight:600;
+  .card.featured .dot{
     color:var(--amber);
-    background:rgba(245,158,11,.08);
-    border:1px dashed rgba(245,158,11,.45);
+    background:rgba(245,158,11,.12);
+    border-color:rgba(245,158,11,.45);
   }
-  .badge::before{
-    content:"";width:6px;height:6px;border-radius:50%;
-    background:var(--amber);
-    animation:pulse 2s infinite;
+  .card.featured .node-num .line{
+    background:linear-gradient(90deg,rgba(245,158,11,.45),transparent);
+  }
+  .card.featured h3{font-size:19px;}
+  .btn.amber{
+    color:#241300;
+    background:linear-gradient(120deg,#fcd34d,var(--amber));
+    box-shadow:0 10px 24px -12px rgba(245,158,11,.9);
+  }
+  .btn.amber:hover{
+    box-shadow:0 14px 30px -12px rgba(245,158,11,1);
   }
 
   footer{
@@ -284,9 +276,8 @@
   <div class="tag">Complex Systems Engineering</div>
 
   <h1>洲际管道运输系统<br><span class="accent">系统作业合集</span></h1>
-  <p class="sub">围绕洲际管道运输系统展开的系统工程作业，涵盖系统分解、需求分析与定义等阶段。</p>
+  <p class="sub">围绕洲际管道运输系统展开的系统工程作业，涵盖系统分解、需求分析与定义等阶段，并附作业总汇报。</p>
 
-  <!-- ===== 个人信息 ===== -->
   <div class="profile">
     <div class="chip"><b>姓名</b> 宋培源</div>
     <div class="chip"><b>学号</b> 15241608</div>
@@ -294,10 +285,10 @@
     <div class="chip"><b>课程</b> 复杂系统工程</div>
   </div>
 
-  <!-- ===== 管道装饰线 ===== -->
   <div class="pipe">
     <div class="pipe-track"></div>
     <div class="pipe-nodes">
+      <span class="node"></span>
       <span class="node"></span>
       <span class="node"></span>
       <span class="node"></span>
@@ -307,12 +298,12 @@
 
   <div class="section-head">
     <h2>作业列表</h2>
-    <span class="count">3 / 3 已完成</span>
+    <span class="count">5 / 5 已完成</span>
   </div>
 
   <div class="grid">
 
-    <!-- 第1次作业 -->
+    <!-- 第1次 -->
     <div class="card">
       <div class="node-num"><span class="dot">01</span><span class="line"></span></div>
       <h3>系统分解</h3>
@@ -320,7 +311,7 @@
       <a class="btn" href="homework01/hw01.html" target="_blank" rel="noopener">查看作业</a>
     </div>
 
-    <!-- 第2次作业 -->
+    <!-- 第2次 -->
     <div class="card">
       <div class="node-num"><span class="dot">02</span><span class="line"></span></div>
       <h3>需求分析与定义</h3>
@@ -328,12 +319,28 @@
       <a class="btn" href="homework01/hw02.html" target="_blank" rel="noopener">查看作业</a>
     </div>
 
-    <!-- 第3次作业 -->
-    <div class="card pending">
+    <!-- 第3次 -->
+    <div class="card">
       <div class="node-num"><span class="dot">03</span><span class="line"></span></div>
-      <h3>SyRS与系统架构</h3>
-      <p>系统需求规格、初始架构与安全分析。</p>
+      <h3>第三次作业</h3>
+      <p>第三次作业内容，点击查看。</p>
       <a class="btn" href="homework01/hw03.html" target="_blank" rel="noopener">查看作业</a>
+    </div>
+
+    <!-- 第4次 -->
+    <div class="card">
+      <div class="node-num"><span class="dot">04</span><span class="line"></span></div>
+      <h3>第四次作业</h3>
+      <p>第四次作业内容，点击查看。</p>
+      <a class="btn" href="homework01/hw04.html" target="_blank" rel="noopener">查看作业</a>
+    </div>
+
+    <!-- 作业总汇报 -->
+    <div class="card featured">
+      <div class="node-num"><span class="dot">总</span><span class="line"></span></div>
+      <h3>作业总汇报</h3>
+      <p>洲际管道运输系统系统工程作业总汇报，汇总四次作业的完整成果与阶段结论。</p>
+      <a class="btn amber" href="homework01/report.html" target="_blank" rel="noopener">查看总汇报</a>
     </div>
 
   </div>
